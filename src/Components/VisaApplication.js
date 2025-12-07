@@ -95,7 +95,7 @@ const VisaApplication = () => {
       setLoading(true);
       const token = localStorage.getItem("accessToken");
       const response = await axios.get(
-        "http://localhost:3000/api/student/visa-applications/pricing",
+        "https://mountgc-backend.onrender.com/api/student/visa-applications/pricing",
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         }
@@ -114,7 +114,7 @@ const VisaApplication = () => {
       setCalculating(true);
       const token = localStorage.getItem("accessToken");
       const response = await axios.post(
-        "http://localhost:3000/api/student/visa-applications/calculate",
+        "https://mountgc-backend.onrender.com/api/student/visa-applications/calculate",
         {
           currency,
           dependents: parseInt(dependents),
@@ -172,7 +172,7 @@ const VisaApplication = () => {
 
       // Step 1: Create purchase record
       const purchaseResponse = await axios.post(
-        "http://localhost:3000/api/student/visa-applications/purchase",
+        "https://mountgc-backend.onrender.com/api/student/visa-applications/purchase",
         purchaseData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -185,7 +185,7 @@ const VisaApplication = () => {
 
       // Step 2: Create Stripe checkout session
       const checkoutResponse = await axios.post(
-        "http://localhost:3000/api/student/visa-applications/create-checkout-session",
+        "https://mountgc-backend.onrender.com/api/student/visa-applications/create-checkout-session",
         {
           purchaseId: purchase.purchase_id,
         },

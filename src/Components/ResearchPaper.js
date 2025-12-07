@@ -162,7 +162,7 @@ const ResearchPaper = () => {
   useEffect(() => {
     const fetchPricing = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/student/research-papers/pricing");
+        const response = await axios.get("https://mountgc-backend.onrender.com/api/student/research-papers/pricing");
         if (response.data.success) {
           const data = response.data.data;
           setPricingData(data);

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: 'https://mountgc-backend.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -34,7 +34,7 @@ api.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const response = await axios.post('http://localhost:3000/api/auth/refresh-token', {
+        const response = await axios.post('https://mountgc-backend.onrender.com/api/auth/refresh-token', {
           refreshToken,
         });
 

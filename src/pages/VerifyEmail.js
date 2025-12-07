@@ -19,7 +19,7 @@ const VerifyEmail = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/auth/verify-email?token=${token}`
+          `https://mountgc-backend.onrender.com/api/auth/verify-email?token=${token}`
         );
 
         if (response.data.success) {

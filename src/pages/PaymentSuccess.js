@@ -24,7 +24,7 @@ const PaymentSuccess = () => {
     const verifyPayment = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/payment/stripe/session-status?session_id=${sessionId}`
+          `https://mountgc-backend.onrender.com/api/payment/stripe/session-status?session_id=${sessionId}`
         );
 
         if (response.data.success) {

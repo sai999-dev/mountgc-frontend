@@ -53,7 +53,7 @@ const BookCounseling = () => {
   const fetchTimeSlots = async () => {
     try {
       console.log("🔄 Fetching time slots for timezone:", timezone);
-      const response = await axios.get(`http://localhost:3000/api/timeslots/active?timezone=${timezone}`);
+      const response = await axios.get(`https://mountgc-backend.onrender.com/api/timeslots/active?timezone=${timezone}`);
       console.log("📥 Time slots response:", response.data);
       if (response.data.success) {
         const slots = response.data.data.map(slot => slot.time);
@@ -74,7 +74,7 @@ const BookCounseling = () => {
     try {
       const dateStr = selectedDate.toISOString().split('T');
       console.log("🔄 Fetching available slots for:", dateStr, "timezone:", timezone);
-      const response = await axios.get(`http://localhost:3000/api/bookings/available-slots?date=${dateStr}&timezone=${timezone}`);
+      const response = await axios.get(`https://mountgc-backend.onrender.com/api/bookings/available-slots?date=${dateStr}&timezone=${timezone}`);
       console.log("📥 Available slots response:", response.data);
       if (response.data.success) {
         setAvailableSlots(response.data.data.availableSlots);
@@ -143,7 +143,7 @@ const BookCounseling = () => {
     };
     console.log("📤 Booking data:", bookingData);
     try {
-      const response = await axios.post('http://localhost:3000/api/bookings', bookingData);
+      const response = await axios.post('https://mountgc-backend.onrender.com/api/bookings', bookingData);
       console.log("✅ Booking response:", response.data);
       if (response.data.success) {
         toast.success('🎉 Session booked successfully!');
