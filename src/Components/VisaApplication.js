@@ -3,6 +3,7 @@ import { Info, Sparkles, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import TermsModal from "./TermsModal";
 
 const VisaApplication = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const VisaApplication = () => {
 
   // Form state
   const [showForm, setShowForm] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -155,6 +157,11 @@ const VisaApplication = () => {
       return;
     }
 
+    // Show terms modal before proceeding to payment
+    setShowTermsModal(true);
+  };
+
+  const handleTermsAccepted = async () => {
     try {
       setSubmitting(true);
       const token = localStorage.getItem("accessToken");
@@ -206,6 +213,7 @@ const VisaApplication = () => {
           "Failed to submit visa application. Please try again."
       );
       setSubmitting(false);
+      setShowForm(false);
     }
   };
 
@@ -569,6 +577,14 @@ const VisaApplication = () => {
           </div>
         </div>
       </div>
+
+      {/* Terms and Conditions Modal */}
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        onAccept={handleTermsAccepted}
+        serviceType="visa_application"
+      />
     </div>
   );
 };
