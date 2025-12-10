@@ -6,6 +6,7 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { authService } from "../services/authService";
 import api from "../services/api";
+import TermsModal from "./TermsModal";
 
 const ResearchPaper = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const ResearchPaper = () => {
   const [pricingData, setPricingData] = useState(null);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [purchaseForm, setPurchaseForm] = useState({
@@ -79,28 +81,33 @@ const ResearchPaper = () => {
     });
   };
 
-  // Handle purchase submission
+  // Handle purchase submission (shows terms modal first)
   const handlePurchaseSubmit = async (e) => {
     e.preventDefault();
+
+    // CRITICAL: Check authentication before proceeding
+    if (!isAuthenticated || !authService.isAuthenticated()) {
+      toast.error("You must be logged in to purchase. Please login first.");
+      setShowPurchaseModal(false);
+      navigate("/signin?redirect=/research-paper");
+      return;
+    }
+
+    // Validate form
+    if (!purchaseForm.name || !purchaseForm.email) {
+      toast.error("Name and email are required");
+      return;
+    }
+
+    // Show terms modal before proceeding to payment
+    setShowTermsModal(true);
+  };
+
+  // Proceed with payment after terms accepted
+  const handleTermsAccepted = async () => {
     setPurchaseLoading(true);
 
     try {
-      // CRITICAL: Check authentication before proceeding
-      if (!isAuthenticated || !authService.isAuthenticated()) {
-        toast.error("You must be logged in to purchase. Please login first.");
-        setShowPurchaseModal(false);
-        setPurchaseLoading(false);
-        navigate("/signin?redirect=/research-paper");
-        return;
-      }
-
-      // Validate form
-      if (!purchaseForm.name || !purchaseForm.email) {
-        toast.error("Name and email are required");
-        setPurchaseLoading(false);
-        return;
-      }
-
       // Prepare purchase data
       const purchaseData = {
         name: purchaseForm.name,
@@ -155,6 +162,7 @@ const ResearchPaper = () => {
       toast.error(errorMessage);
     } finally {
       setPurchaseLoading(false);
+      setShowPurchaseModal(false);
     }
   };
 
@@ -585,6 +593,14 @@ const ResearchPaper = () => {
           </div>
         </div>
       )}
+
+      {/* Terms & Conditions Modal */}
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        onAccept={handleTermsAccepted}
+        serviceType="research_paper"
+      />
     </div>
   );
 };
