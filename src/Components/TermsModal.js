@@ -36,7 +36,7 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType }) => {
 
   const checkExistingAgreement = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       if (!token) return;
 
       const response = await axios.get(
@@ -70,7 +70,7 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType }) => {
     setSubmitting(true);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
 
       const response = await axios.post(
         'https://mountgc-backend.onrender.com/api/student/agreement/sign',
