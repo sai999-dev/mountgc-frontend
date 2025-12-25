@@ -147,7 +147,7 @@ const VisaApplication = () => {
     e.preventDefault();
 
     // Validation
-    if (!formData.name || !formData.email) {
+    if (!formData.name || !formData.email || !formData.phone) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -521,7 +521,7 @@ const VisaApplication = () => {
 
                   <div>
                     <label className="block text-xs font-medium mb-1">
-                      Phone (Optional)
+                      Phone
                     </label>
                     <input
                       type="tel"
@@ -530,6 +530,7 @@ const VisaApplication = () => {
                       onChange={handleFormChange}
                       className="border border-gray-300 rounded-md px-3 py-2 w-full text-sm"
                       placeholder="Enter your phone number"
+                      required
                     />
                   </div>
 

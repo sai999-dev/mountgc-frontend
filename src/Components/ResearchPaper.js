@@ -94,8 +94,8 @@ const ResearchPaper = () => {
     }
 
     // Validate form
-    if (!purchaseForm.name || !purchaseForm.email) {
-      toast.error("Name and email are required");
+    if (!purchaseForm.name || !purchaseForm.email || !purchaseForm.phone) {
+      toast.error("Name, email, and phone number are required");
       return;
     }
 
@@ -523,7 +523,7 @@ const ResearchPaper = () => {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Phone Number (Optional)
+                    Phone Number
                   </label>
                   <input
                     type="tel"
@@ -532,6 +532,7 @@ const ResearchPaper = () => {
                     onChange={handlePurchaseFormChange}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="+1 (555) 000-0000"
+                    required
                   />
                 </div>
 

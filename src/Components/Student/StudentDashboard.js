@@ -108,6 +108,24 @@ const StudentDashboard = () => {
     );
   };
 
+  // Helper function to get order status badge
+  const getOrderStatusBadge = (status) => {
+    const statusConfig = {
+      initiated: { bg: "bg-blue-100", text: "text-blue-700", icon: AlertCircle, label: "Initiated" },
+      in_progress: { bg: "bg-purple-100", text: "text-purple-700", icon: Package, label: "In Progress" },
+      completed: { bg: "bg-green-100", text: "text-green-700", icon: CheckCircle, label: "Completed" },
+      cancelled: { bg: "bg-red-100", text: "text-red-700", icon: AlertCircle, label: "Cancelled" },
+    };
+    const config = statusConfig[status] || statusConfig.initiated;
+    const Icon = config.icon;
+    return (
+      <span className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-semibold ${config.bg} ${config.text}`}>
+        <Icon size={14} />
+        <span>{config.label}</span>
+      </span>
+    );
+  };
+
   // Helper function to get case status badge
   const getCaseStatusBadge = (status) => {
     if (status === 'closed') {
@@ -335,6 +353,7 @@ const StudentDashboard = () => {
                               <h3 className="text-lg font-semibold text-gray-800">
                                 Research Paper Drafting & Publishing Help
                               </h3>
+                              {getOrderStatusBadge(purchase.status)}
                               {getPaymentStatusBadge(purchase.payment_status)}
                             </div>
                             <p className="text-sm text-gray-500">
@@ -343,7 +362,13 @@ const StudentDashboard = () => {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <p className="text-xs text-gray-500 mb-1">Order Status</p>
+                            <div className="mt-1">
+                              {getOrderStatusBadge(purchase.status)}
+                            </div>
+                          </div>
                           <div className="bg-gray-50 p-3 rounded-lg">
                             <p className="text-xs text-gray-500 mb-1">Amount Paid</p>
                             <p className="text-lg font-bold text-green-600">
@@ -370,18 +395,34 @@ const StudentDashboard = () => {
                           </div>
                         </div>
 
+                        {purchase.status === 'initiated' && purchase.payment_status === 'completed' && (
+                          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                            <p className="text-sm text-blue-800">
+                              <strong>Order Initiated!</strong> Your payment has been received. Our team will review your request and start working on it soon.
+                            </p>
+                          </div>
+                        )}
+
                         {purchase.status === 'in_progress' && (
-                          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                            <p className="text-sm text-green-800">
-                              <strong>Your service is in progress!</strong> Our team will contact you shortly to discuss your requirements.
+                          <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                            <p className="text-sm text-purple-800">
+                              <strong>Your service is in progress!</strong> Our team is actively working on your research paper. You'll receive updates as we make progress.
                             </p>
                           </div>
                         )}
 
                         {purchase.status === 'completed' && (
-                          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                            <p className="text-sm text-blue-800">
-                              <strong>Service completed!</strong> Thank you for choosing MountGC.
+                          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                            <p className="text-sm text-green-800">
+                              <strong>Service completed!</strong> Your research paper has been delivered. Thank you for choosing MountGC.
+                            </p>
+                          </div>
+                        )}
+
+                        {purchase.status === 'cancelled' && (
+                          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                            <p className="text-sm text-red-800">
+                              <strong>Order Cancelled.</strong> This order has been cancelled. Please contact support if you have any questions.
                             </p>
                           </div>
                         )}
@@ -428,6 +469,7 @@ const StudentDashboard = () => {
                               <h3 className="text-lg font-semibold text-gray-800">
                                 Visa Application - {purchase.country}
                               </h3>
+                              {getOrderStatusBadge(purchase.status)}
                               {getPaymentStatusBadge(purchase.payment_status)}
                             </div>
                             <p className="text-sm text-gray-500">
@@ -436,7 +478,13 @@ const StudentDashboard = () => {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <p className="text-xs text-gray-500 mb-1">Order Status</p>
+                            <div className="mt-1">
+                              {getOrderStatusBadge(purchase.status)}
+                            </div>
+                          </div>
                           <div className="bg-gray-50 p-3 rounded-lg">
                             <p className="text-xs text-gray-500 mb-1">Amount</p>
                             <p className="text-lg font-bold text-yellow-600">
@@ -471,18 +519,34 @@ const StudentDashboard = () => {
                           </div>
                         )}
 
+                        {purchase.status === 'initiated' && purchase.payment_status === 'completed' && (
+                          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                            <p className="text-sm text-blue-800">
+                              <strong>Application Initiated!</strong> Your payment has been received. Our team will review your application and contact you soon.
+                            </p>
+                          </div>
+                        )}
+
                         {purchase.status === 'in_progress' && (
-                          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                            <p className="text-sm text-yellow-800">
-                              <strong>Your visa application is in progress!</strong> Our team will contact you shortly to guide you through the process.
+                          <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                            <p className="text-sm text-purple-800">
+                              <strong>Your visa application is in progress!</strong> Our team is actively processing your application and will guide you through each step.
                             </p>
                           </div>
                         )}
 
                         {purchase.status === 'completed' && (
-                          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                            <p className="text-sm text-blue-800">
-                              <strong>Application process completed!</strong> Thank you for choosing MountGC.
+                          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                            <p className="text-sm text-green-800">
+                              <strong>Application process completed!</strong> Your visa application has been successfully processed. Thank you for choosing MountGC.
+                            </p>
+                          </div>
+                        )}
+
+                        {purchase.status === 'cancelled' && (
+                          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                            <p className="text-sm text-red-800">
+                              <strong>Application Cancelled.</strong> This visa application has been cancelled. Please contact support if you have any questions.
                             </p>
                           </div>
                         )}
@@ -652,6 +716,7 @@ const StudentDashboard = () => {
                             <h3 className="text-lg font-semibold text-gray-800">
                               Research Paper Drafting & Publishing Help
                             </h3>
+                            {getOrderStatusBadge(purchase.status)}
                             {getPaymentStatusBadge(purchase.payment_status)}
                           </div>
                           <p className="text-sm text-gray-500">
@@ -660,7 +725,13 @@ const StudentDashboard = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <p className="text-xs text-gray-500 mb-1">Order Status</p>
+                          <div className="mt-1">
+                            {getOrderStatusBadge(purchase.status)}
+                          </div>
+                        </div>
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <p className="text-xs text-gray-500 mb-1">Amount Paid</p>
                           <p className="text-lg font-bold text-green-600">
@@ -687,18 +758,34 @@ const StudentDashboard = () => {
                         </div>
                       </div>
 
+                      {purchase.status === 'initiated' && purchase.payment_status === 'completed' && (
+                        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                          <p className="text-sm text-blue-800">
+                            <strong>Order Initiated!</strong> Your payment has been received. Our team will review your request and start working on it soon.
+                          </p>
+                        </div>
+                      )}
+
                       {purchase.status === 'in_progress' && (
-                        <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                          <p className="text-sm text-green-800">
-                            <strong>Your service is in progress!</strong> Our team will contact you shortly to discuss your requirements.
+                        <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                          <p className="text-sm text-purple-800">
+                            <strong>Your service is in progress!</strong> Our team is actively working on your research paper. You'll receive updates as we make progress.
                           </p>
                         </div>
                       )}
 
                       {purchase.status === 'completed' && (
-                        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                          <p className="text-sm text-blue-800">
-                            <strong>Service completed!</strong> Thank you for choosing MountGC.
+                        <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                          <p className="text-sm text-green-800">
+                            <strong>Service completed!</strong> Your research paper has been delivered. Thank you for choosing MountGC.
+                          </p>
+                        </div>
+                      )}
+
+                      {purchase.status === 'cancelled' && (
+                        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                          <p className="text-sm text-red-800">
+                            <strong>Order Cancelled.</strong> This order has been cancelled. Please contact support if you have any questions.
                           </p>
                         </div>
                       )}
@@ -743,6 +830,7 @@ const StudentDashboard = () => {
                                 <h3 className="text-lg font-semibold text-gray-800">
                                   Visa Application - {purchase.country}
                                 </h3>
+                                {getOrderStatusBadge(purchase.status)}
                                 {getPaymentStatusBadge(purchase.payment_status)}
                               </div>
                               <p className="text-sm text-gray-500">
@@ -751,7 +839,13 @@ const StudentDashboard = () => {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+                            <div className="bg-gray-50 p-3 rounded-lg">
+                              <p className="text-xs text-gray-500 mb-1">Order Status</p>
+                              <div className="mt-1">
+                                {getOrderStatusBadge(purchase.status)}
+                              </div>
+                            </div>
                             <div className="bg-gray-50 p-3 rounded-lg">
                               <p className="text-xs text-gray-500 mb-1">Amount</p>
                               <p className="text-lg font-bold text-yellow-600">
@@ -786,18 +880,34 @@ const StudentDashboard = () => {
                             </div>
                           )}
 
+                          {purchase.status === 'initiated' && purchase.payment_status === 'completed' && (
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                              <p className="text-sm text-blue-800">
+                                <strong>Application Initiated!</strong> Your payment has been received. Our team will review your application and contact you soon.
+                              </p>
+                            </div>
+                          )}
+
                           {purchase.status === 'in_progress' && (
-                            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                              <p className="text-sm text-yellow-800">
-                                <strong>Your visa application is in progress!</strong>
+                            <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                              <p className="text-sm text-purple-800">
+                                <strong>Your visa application is in progress!</strong> Our team is actively processing your application and will guide you through each step.
                               </p>
                             </div>
                           )}
 
                           {purchase.status === 'completed' && (
-                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                              <p className="text-sm text-blue-800">
-                                <strong>Application process completed!</strong>
+                            <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                              <p className="text-sm text-green-800">
+                                <strong>Application process completed!</strong> Your visa application has been successfully processed. Thank you for choosing MountGC.
+                              </p>
+                            </div>
+                          )}
+
+                          {purchase.status === 'cancelled' && (
+                            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                              <p className="text-sm text-red-800">
+                                <strong>Application Cancelled.</strong> This visa application has been cancelled. Please contact support if you have any questions.
                               </p>
                             </div>
                           )}
