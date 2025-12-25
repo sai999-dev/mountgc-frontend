@@ -521,7 +521,7 @@ const VisaApplication = () => {
 
                   <div>
                     <label className="block text-xs font-medium mb-1">
-                      Phone
+                      Phone <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="tel"
