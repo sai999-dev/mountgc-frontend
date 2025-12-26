@@ -10,7 +10,7 @@ const Services = () => {
       icon: <Users className="text-green-500" size={28} />,
       title: "Counselling Session",
       desc: "Google Meet session with our counsellors. Get transparency on your case for study/work overseas. Charges fully adjustable in services' pricing.",
-      route: "/book-counseling",
+      route: "/counselling-session",
     },
     {
       icon: <FileText className="text-green-500" size={28} />,

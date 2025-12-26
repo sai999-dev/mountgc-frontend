@@ -4,6 +4,7 @@ import Navbar from "./Components/Navbar";
 import SubNavbar from "./Components/SubNavbar";
 import Services from "./Components/Services";
 import BookCounseling from "./Components/BookCounseling";
+import CounsellingSession from "./Components/CounsellingSession";
 import ResearchPaper from "./Components/ResearchPaper";
 import VisaApplication from "./Components/VisaApplication";
 import Footer from "./Components/Footer";
@@ -57,6 +58,7 @@ phoneNumber="917337505390"
                   }
                 />
                 <Route path="/services" element={<Services />} />
+                <Route path="/counselling-session" element={<CounsellingSession />} />
                 <Route path="/book-counseling" element={<BookCounseling />} />
                 <Route path="/research-paper" element={<ResearchPaper />} />
                 <Route path="/visa-application" element={<VisaApplication />} />
