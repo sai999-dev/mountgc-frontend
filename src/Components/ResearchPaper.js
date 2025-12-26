@@ -344,7 +344,7 @@ const ResearchPaper = () => {
             </div>
 
             {/* High-Impact Research Publications Box */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6 mt-6">
+            <div className= " bg-white border-2 border-green-200 rounded-xl p-6 mt-6">
               <h3 className="text-xl md:text-2xl font-bold text-green-600 text-center mb-3">
                 High-Impact Research Publications
               </h3>
