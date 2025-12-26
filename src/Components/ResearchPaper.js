@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Video, Phone, MessageCircle, CheckCircle, Info, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import gifVideo from "../Assets/gif.mp4";
+import publishImg1 from "../Assets/publishimg1.png";
+import publishImg3 from "../Assets/publishimg3.png";
+import publishImg4 from "../Assets/publishimg4.png";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { authService } from "../services/authService";
@@ -327,16 +330,47 @@ const ResearchPaper = () => {
               Unlock a world of opportunities
             </p>
 
-            <div className="space-y-4">
+            {/* 2 Column, 3 Row Grid for Advantages */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               {advantages.map((advantage, index) => (
                 <div
                   key={index}
                   className="flex items-start gap-3 bg-green-50 border border-green-200 rounded-lg p-4 hover:shadow-md transition"
                 >
                   <CheckCircle className="text-green-500 flex-shrink-0 mt-1" size={24} />
-                  <p className="text-gray-800">{advantage}</p>
+                  <p className="text-gray-800 text-sm md:text-base">{advantage}</p>
                 </div>
               ))}
+            </div>
+
+            {/* High-Impact Research Publications Box */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6 mt-6">
+              <h3 className="text-xl md:text-2xl font-bold text-green-600 text-center mb-3">
+                High-Impact Research Publications
+              </h3>
+              <p className="text-gray-700 text-center mb-6">
+                The research work under this program is highly valuable and is guaranteed to be published in{" "}
+                <span className="font-semibold">IEEE, Springer, Elsevier, or Taylor & Francis</span>
+              </p>
+
+              {/* Publisher Images */}
+              <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
+                <img
+                  src={publishImg1}
+                  alt="IEEE Publisher"
+                  className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition"
+                />
+                <img
+                  src={publishImg3}
+                  alt="Springer Publisher"
+                  className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition"
+                />
+                <img
+                  src={publishImg4}
+                  alt="Elsevier Publisher"
+                  className="h-12 md:h-16 object-contain opacity-90 hover:opacity-100 transition"
+                />
+              </div>
             </div>
           </div>
 
