@@ -10,85 +10,56 @@ import {
   MessageCircle,
   ChevronDown,
   ChevronUp,
-  Award,
+  ArrowLeft,
+  FileText,
   Briefcase,
   GraduationCap,
   Target,
-  ArrowRight,
   Phone,
+  Info,
+  Plane,
 } from "lucide-react";
 
 const CounsellingSession = () => {
   const navigate = useNavigate();
-  const [currency, setCurrency] = useState("INR");
+  const [currency, setCurrency] = useState("USD");
+  const [selectedCounselor, setSelectedCounselor] = useState("Yash Mittra");
   const [expandedFaq, setExpandedFaq] = useState(null);
 
-  const currencyOptions = [
-    { code: "INR", symbol: "₹", flag: "🇮🇳" },
-    { code: "USD", symbol: "$", flag: "🇺🇸" },
+  // Counselors list (will be managed by admin later)
+  const counselors = [
+    { id: 1, name: "Yash Mittra", role: "Senior Counselor" },
+    { id: 2, name: "Priya Sharma", role: "Career Expert" },
+    { id: 3, name: "Rahul Verma", role: "Visa Specialist" },
   ];
 
+  // Pricing based on currency and counselor (will be managed by admin later)
   const pricing = {
-    INR: {
-      junior: { original: 2999, discounted: 1999 },
-      senior: { original: 4999, discounted: 3499 },
-      ceo: { original: 9999, discounted: 7999 },
-    },
-    USD: {
-      junior: { original: 49, discounted: 29 },
-      senior: { original: 79, discounted: 59 },
-      ceo: { original: 149, discounted: 119 },
-    },
+    USD: { original: 156.00, discounted: 125.00 },
+    INR: { original: 12999, discounted: 10499 },
   };
 
-  const counselorTiers = [
+  // Services that charges are adjustable in
+  const adjustableServices = [
     {
-      id: "junior",
-      title: "Junior Counselor",
-      icon: GraduationCap,
-      experience: "1-3 years experience",
-      description: "Perfect for general guidance and initial consultations",
-      features: [
-        "Profile evaluation",
-        "University suggestions",
-        "Basic visa guidance",
-        "Email support for 7 days",
-      ],
-      color: "green",
-      popular: false,
+      icon: FileText,
+      title: "Complete Application Help",
+      route: "/research-paper",
     },
     {
-      id: "senior",
-      title: "Senior Counselor",
       icon: Briefcase,
-      experience: "5+ years experience",
-      description: "Expert guidance for complex cases and applications",
-      features: [
-        "Comprehensive profile analysis",
-        "Personalized university shortlisting",
-        "SOP/LOR strategy",
-        "Visa interview preparation",
-        "Priority email support for 14 days",
-      ],
-      color: "green",
-      popular: true,
+      title: "Job Application Help",
+      route: null,
     },
     {
-      id: "ceo",
-      title: "CEO Session",
-      icon: Award,
-      experience: "Industry veteran",
-      description: "Direct session with our CEO for premium guidance",
-      features: [
-        "Strategic career planning",
-        "Exclusive university connections",
-        "Complete application review",
-        "Mock interview with feedback",
-        "Unlimited support for 30 days",
-        "Priority processing",
-      ],
-      color: "green",
-      popular: false,
+      icon: GraduationCap,
+      title: "3 Research Papers (0 Co-authors)",
+      route: "/research-paper",
+    },
+    {
+      icon: Plane,
+      title: "Express Entry/PNP Help service",
+      route: "/visa-application",
     },
   ];
 
@@ -155,9 +126,9 @@ const CounsellingSession = () => {
     { value: "50+", label: "Countries Covered" },
   ];
 
-  const getCurrencySymbol = () => {
-    return currencyOptions.find((c) => c.code === currency)?.symbol || "₹";
-  };
+  const currentPricing = pricing[currency];
+  const savings = currentPricing.original - currentPricing.discounted;
+  const savingsPercent = Math.round((savings / currentPricing.original) * 100);
 
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent(
@@ -166,8 +137,23 @@ const CounsellingSession = () => {
     window.open(`https://wa.me/917337505390?text=${message}`, "_blank");
   };
 
-  const handleBookSession = (tier) => {
-    navigate("/book-counseling", { state: { selectedTier: tier } });
+  const handleBookSession = () => {
+    navigate("/book-counseling", {
+      state: {
+        selectedCounselor,
+        currency,
+        price: currentPricing.discounted
+      }
+    });
+  };
+
+  const handleLoginToPay = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      handleBookSession();
+    } else {
+      navigate("/signin", { state: { redirectTo: "/counselling-session" } });
+    }
   };
 
   return (
@@ -196,7 +182,7 @@ const CounsellingSession = () => {
               </p>
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={() => handleBookSession("senior")}
+                  onClick={handleBookSession}
                   className="bg-white text-green-700 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition flex items-center space-x-2 shadow-lg"
                 >
                   <Calendar className="w-5 h-5" />
@@ -267,8 +253,153 @@ const CounsellingSession = () => {
         </div>
       </section>
 
+      {/* Main Content - About Service & Start Now */}
+      <section className="py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left Side - About Service */}
+            <div className="lg:col-span-2">
+              {/* Back button and title */}
+              <div className="flex items-center mb-6">
+                <button
+                  onClick={() => navigate("/services")}
+                  className="text-green-600 hover:text-green-700 mr-4"
+                >
+                  <ArrowLeft className="w-6 h-6" />
+                </button>
+                <div className="flex-1 text-center">
+                  <h2 className="text-2xl font-bold text-gray-800">About Service</h2>
+                  <div className="flex items-center justify-center mt-2">
+                    <div className="w-2 h-2 bg-yellow-500 transform rotate-45"></div>
+                    <div className="w-24 h-0.5 bg-yellow-500"></div>
+                    <div className="w-2 h-2 bg-yellow-500 transform rotate-45"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Charges Adjustable In */}
+              <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Charges Fully Adjustable In
+                </h3>
+                <div className="space-y-3">
+                  {adjustableServices.map((service, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                          <service.icon className="w-5 h-5 text-yellow-600" />
+                        </div>
+                        <span className="text-gray-700 font-medium">{service.title}</span>
+                      </div>
+                      <button
+                        onClick={() => service.route && navigate(service.route)}
+                        className="px-4 py-2 border-2 border-yellow-500 text-yellow-600 rounded-lg font-medium hover:bg-yellow-50 transition text-sm"
+                      >
+                        Check Now
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Start Now Card */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 sticky top-4">
+                <div className="p-6 border-b border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-800 text-center">Start Now</h3>
+                </div>
+                <div className="p-6 space-y-4">
+                  {/* Services */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-medium">Services:</span>
+                    <span className="text-gray-500">Initial Counseling Session</span>
+                  </div>
+
+                  {/* Duration */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-medium">Duration:</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-gray-500">1 hour (average)</span>
+                      <Info className="w-4 h-4 text-green-500" />
+                    </div>
+                  </div>
+
+                  {/* Currency Dropdown */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-medium">Currency:</span>
+                    <select
+                      value={currency}
+                      onChange={(e) => setCurrency(e.target.value)}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    >
+                      <option value="USD">USD</option>
+                      <option value="INR">INR</option>
+                    </select>
+                  </div>
+
+                  {/* Session With Dropdown */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-medium">Session With:</span>
+                    <select
+                      value={selectedCounselor}
+                      onChange={(e) => setSelectedCounselor(e.target.value)}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    >
+                      {counselors.map((counselor) => (
+                        <option key={counselor.id} value={counselor.name}>
+                          {counselor.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Pricing */}
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-gray-600 font-medium">Actual Amount:</span>
+                      <span className="text-gray-400 line-through">
+                        {currency} {currentPricing.original.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-gray-600 font-medium">Amount:</span>
+                      <span className="text-green-600 font-bold text-xl">
+                        {currency} {currentPricing.discounted.toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 font-medium">You save:</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-gray-500">
+                          {currency} {savings.toFixed(2)}
+                        </span>
+                        <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                          {savingsPercent}% off
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Login to Pay Button */}
+                  <button
+                    onClick={handleLoginToPay}
+                    className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-4 rounded-full transition mt-6 text-lg"
+                  >
+                    Log In To Pay
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Who Is This For Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">
             Who Is This For?
@@ -281,7 +412,7 @@ const CounsellingSession = () => {
             {targetAudience.map((item, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition border border-gray-100"
+                className="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition border border-gray-100"
               >
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                   <item.icon className="w-6 h-6 text-green-600" />
@@ -294,111 +425,8 @@ const CounsellingSession = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section className="py-16 px-4 bg-gray-100">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
-              Choose Your Counselor
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Select the expertise level that matches your needs
-            </p>
-            {/* Currency Selector */}
-            <div className="inline-flex items-center bg-white rounded-lg shadow-sm border p-1">
-              {currencyOptions.map((curr) => (
-                <button
-                  key={curr.code}
-                  onClick={() => setCurrency(curr.code)}
-                  className={`px-4 py-2 rounded-md flex items-center space-x-2 transition ${
-                    currency === curr.code
-                      ? "bg-green-600 text-white"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  <span>{curr.flag}</span>
-                  <span>{curr.code}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {counselorTiers.map((tier) => (
-              <div
-                key={tier.id}
-                className={`bg-white rounded-2xl shadow-lg overflow-hidden relative ${
-                  tier.popular ? "ring-2 ring-green-500 transform md:-translate-y-2" : ""
-                }`}
-              >
-                {tier.popular && (
-                  <div className="bg-green-500 text-white text-center py-2 text-sm font-semibold">
-                    Most Popular
-                  </div>
-                )}
-                <div className="p-8">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                      <tier.icon className="w-6 h-6 text-green-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-800">
-                        {tier.title}
-                      </h3>
-                      <p className="text-sm text-gray-500">{tier.experience}</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 mb-6">{tier.description}</p>
-                  <div className="mb-6">
-                    <div className="flex items-baseline space-x-2">
-                      <span className="text-3xl font-bold text-green-600">
-                        {getCurrencySymbol()}
-                        {pricing[currency][tier.id].discounted}
-                      </span>
-                      <span className="text-lg text-gray-400 line-through">
-                        {getCurrencySymbol()}
-                        {pricing[currency][tier.id].original}
-                      </span>
-                    </div>
-                    <p className="text-sm text-green-600 font-medium">
-                      Save{" "}
-                      {Math.round(
-                        ((pricing[currency][tier.id].original -
-                          pricing[currency][tier.id].discounted) /
-                          pricing[currency][tier.id].original) *
-                          100
-                      )}
-                      %
-                    </p>
-                  </div>
-                  <ul className="space-y-3 mb-8">
-                    {tier.features.map((feature, index) => (
-                      <li key={index} className="flex items-start space-x-2">
-                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <button
-                    onClick={() => handleBookSession(tier.id)}
-                    className={`w-full py-3 rounded-lg font-semibold transition flex items-center justify-center space-x-2 ${
-                      tier.popular
-                        ? "bg-green-600 text-white hover:bg-green-700"
-                        : "bg-green-100 text-green-700 hover:bg-green-200"
-                    }`}
-                  >
-                    <span>Book Now</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* How It Works Section */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
             How It Works
@@ -407,8 +435,8 @@ const CounsellingSession = () => {
             {[
               {
                 step: 1,
-                title: "Choose Your Counselor",
-                description: "Select the expertise level that matches your needs",
+                title: "Select Options",
+                description: "Choose your currency and preferred counselor",
                 icon: Users,
               },
               {
@@ -446,7 +474,7 @@ const CounsellingSession = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
             Frequently Asked Questions
@@ -455,13 +483,13 @@ const CounsellingSession = () => {
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+                className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 overflow-hidden"
               >
                 <button
                   onClick={() =>
                     setExpandedFaq(expandedFaq === index ? null : index)
                   }
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition"
+                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-100 transition"
                 >
                   <span className="font-medium text-gray-800">{faq.question}</span>
                   {expandedFaq === index ? (
@@ -493,7 +521,7 @@ const CounsellingSession = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <button
-              onClick={() => handleBookSession("senior")}
+              onClick={handleBookSession}
               className="bg-white text-green-700 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition flex items-center space-x-2 shadow-lg"
             >
               <Calendar className="w-5 h-5" />
