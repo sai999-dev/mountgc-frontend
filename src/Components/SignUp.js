@@ -37,8 +37,15 @@ const SignUp = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      setLoading(false);
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*[0-9])/;
+    if (!passwordRegex.test(formData.password)) {
+      toast.error("Password must include at least one uppercase letter, one special character, and one number");
       setLoading(false);
       return;
     }
@@ -181,6 +188,9 @@ const SignUp = () => {
                 disabled={loading}
               />
             </div>
+            <p className="text-xs text-gray-400 mt-1">
+              Minimum 8 characters with at least one uppercase letter, one special character, and one number
+            </p>
           </div>
 
           <button
