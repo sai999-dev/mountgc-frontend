@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../services/authService";
 import {
   Star,
   Users,
@@ -25,6 +26,23 @@ const CounsellingSession = () => {
   const [currency, setCurrency] = useState("USD");
   const [selectedCounselor, setSelectedCounselor] = useState("Yash Mittra");
   const [expandedFaq, setExpandedFaq] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check authentication status on mount and listen for changes
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuthenticated(authService.isAuthenticated());
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    window.addEventListener('authChange', checkAuth);
+
+    return () => {
+      window.removeEventListener('authChange', checkAuth);
+    };
+  }, []);
 
   // Counselors list (will be managed by admin later)
   const counselors = [
@@ -148,12 +166,13 @@ const CounsellingSession = () => {
   };
 
   const handleLoginToPay = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      handleBookSession();
-    } else {
-      navigate("/signin", { state: { redirectTo: "/counselling-session" } });
+    if (!isAuthenticated) {
+      // Redirect to signin with redirect parameter
+      navigate("/signin?redirect=/counselling-session");
+      return;
     }
+    // User is logged in, proceed to book session
+    handleBookSession();
   };
 
   return (
@@ -392,12 +411,12 @@ const CounsellingSession = () => {
                     </div>
                   </div>
 
-                  {/* Login to Pay Button */}
+                  {/* Login to Pay / Buy Now Button */}
                   <button
                     onClick={handleLoginToPay}
                     className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-4 rounded-full transition mt-6 text-lg"
                   >
-                    Log In To Pay
+                    {isAuthenticated ? "Buy Now" : "Log In To Pay"}
                   </button>
                 </div>
               </div>
