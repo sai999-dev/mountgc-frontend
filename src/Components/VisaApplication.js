@@ -367,10 +367,18 @@ const VisaApplication = () => {
               <p>
                 <strong>Services:</strong> Visa Application Help
               </p>
-              <p>
+              <p className="flex items-center gap-1">
                 <strong>Duration:</strong>{" "}
                 {calculatedPrice?.duration || "1–2 months"}{" "}
-                <Info className="inline text-gray-500" size={14} />
+                <span className="relative group">
+                  <Info className="inline text-gray-500 cursor-pointer" size={14} />
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <span className="relative block">
+                      Note: This timeline is just the minimum average time it takes us to deliver the service from our end. Once enrolled, you can use the service anytime within 1 year of your purchase.
+                      <span className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-gray-800"></span>
+                    </span>
+                  </span>
+                </span>
               </p>
 
               <div>

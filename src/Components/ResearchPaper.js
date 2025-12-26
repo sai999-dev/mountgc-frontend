@@ -388,7 +388,15 @@ const ResearchPaper = () => {
             <div className="mb-4 flex items-center gap-2">
               <label className="block font-semibold text-gray-800">Duration:</label>
               <span className="text-gray-700">{currentPrice.duration}</span>
-              <Info size={16} className="text-gray-400" />
+              <div className="relative group">
+                <Info size={16} className="text-gray-400 cursor-pointer" />
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="relative">
+                    Note: This timeline is just the minimum average time it takes us to deliver the service from our end. Once enrolled, you can use the service anytime within 1 year of your purchase.
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-gray-800"></div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Currency Dropdown */}
