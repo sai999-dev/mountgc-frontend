@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Video, Phone, MessageCircle, CheckCircle, Info, X } from "lucide-react";
+import { Video, Phone, MessageCircle, CheckCircle, Info, X, Star, FileText, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import gifVideo from "../Assets/gif.mp4";
 import publishImg1 from "../Assets/publishimg1.png";
 import publishImg3 from "../Assets/publishimg3.png";
 import publishImg4 from "../Assets/publishimg4.png";
+import heroImage from "../Assets/researchpaper.png";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { authService } from "../services/authService";
@@ -258,10 +259,75 @@ const ResearchPaper = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-12">
+    <div className="min-h-screen bg-gray-50">
       <Toaster position="top-right" />
-      <div className="max-w-6xl mx-auto">
-        
+
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-green-500 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-400 rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
+        </div>
+
+        <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-20">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium animate-pulse">
+                  ON FIRE
+                </span>
+                <div className="flex items-center space-x-1">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm">4.9 (5,000+ publications)</span>
+                </div>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                Research Paper
+                <span className="text-green-500"> Drafting & Publishing </span>
+                Help
+              </h1>
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                Boost your academic profile with peer-reviewed publications in IEEE, Springer, Elsevier. Essential for MS/PhD admissions and O-1/EB-1 visa applications.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={() => document.getElementById('start-now-section').scrollIntoView({ behavior: 'smooth' })}
+                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold transition flex items-center space-x-2 shadow-lg shadow-green-500/25"
+                >
+                  <FileText className="w-5 h-5" />
+                  <span>Get Started</span>
+                </button>
+                <button
+                  onClick={() => {
+                    const message = encodeURIComponent("Hi, I'm interested in the Research Paper Publishing service. Can you help me?");
+                    window.open(`https://wa.me/917337505390?text=${message}`, "_blank");
+                  }}
+                  className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-lg font-semibold transition border border-white/20 flex items-center space-x-2"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  <span>WhatsApp Us</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Hero Image */}
+            <div className="hidden md:block relative">
+              <div className="relative">
+                <img
+                  src={heroImage}
+                  alt="Research Paper Publishing"
+                  className="w-full h-auto rounded-2xl shadow-2xl"
+                />
+                <div className="absolute -inset-4 bg-green-500/20 rounded-3xl blur-2xl -z-10"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-6xl mx-auto px-6 py-12" id="start-now-section">
+
         {/* TOP SECTION: TEXT LEFT + VIDEO RIGHT */}
         <div className="grid md:grid-cols-2 gap-10 items-center mb-12">
           {/* LEFT SIDE CONTENT */}

@@ -20,6 +20,7 @@ import {
   Info,
   Plane,
 } from "lucide-react";
+import heroImage from "../Assets/counsellingsession.png";
 
 const CounsellingSession = () => {
   const navigate = useNavigate();
@@ -216,35 +217,15 @@ const CounsellingSession = () => {
                 </button>
               </div>
             </div>
-            <div className="hidden md:block">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                <div className="flex items-center space-x-4 mb-6">
-                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
-                    <Video className="w-8 h-8" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold">Live Video Session</h3>
-                    <p className="text-green-200">Via Google Meet</p>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Clock className="w-5 h-5 text-green-300" />
-                    <span>60 Minutes Duration</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Calendar className="w-5 h-5 text-green-300" />
-                    <span>Flexible Scheduling</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-300" />
-                    <span>Personalized Action Plan</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <MessageCircle className="w-5 h-5 text-green-300" />
-                    <span>Post-Session Support</span>
-                  </div>
-                </div>
+            {/* Hero Image */}
+            <div className="hidden md:block relative">
+              <div className="relative">
+                <img
+                  src={heroImage}
+                  alt="Expert Counselling Session"
+                  className="w-full h-auto rounded-2xl shadow-2xl"
+                />
+                <div className="absolute -inset-4 bg-green-500/20 rounded-3xl blur-2xl -z-10"></div>
               </div>
             </div>
           </div>

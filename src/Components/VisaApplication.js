@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Info, Sparkles, Loader2 } from "lucide-react";
+import { Info, Sparkles, Loader2, Star, Plane, MessageCircle, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import TermsModal from "./TermsModal";
+import heroImage from "../Assets/Visapplication.png";
 
 const VisaApplication = () => {
   const navigate = useNavigate();
@@ -240,7 +241,91 @@ const VisaApplication = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-yellow-50 to-white min-h-screen px-4 md:px-16 py-10">
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-yellow-500 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-400 rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
+        </div>
+
+        <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-20">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <span className="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
+                  Visa Guarantee
+                </span>
+                <div className="flex items-center space-x-1">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm">4.9 (8,000+ visas approved)</span>
+                </div>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                Visa Application
+                <span className="text-yellow-400"> Help & Support </span>
+              </h1>
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                Complete visa application assistance for USA, Canada, UK. From documentation to mock interviews, we've got you covered with our visa guarantee.
+              </p>
+              <div className="flex flex-wrap gap-4 mb-8">
+                <button
+                  onClick={() => document.getElementById('visa-content-section').scrollIntoView({ behavior: 'smooth' })}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-8 py-4 rounded-lg font-semibold transition flex items-center space-x-2 shadow-lg shadow-yellow-500/25"
+                >
+                  <Plane className="w-5 h-5" />
+                  <span>Get Started</span>
+                </button>
+                <button
+                  onClick={() => {
+                    const message = encodeURIComponent("Hi, I'm interested in the Visa Application Help service. Can you help me?");
+                    window.open(`https://wa.me/917337505390?text=${message}`, "_blank");
+                  }}
+                  className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-lg font-semibold transition border border-white/20 flex items-center space-x-2"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  <span>WhatsApp Us</span>
+                </button>
+              </div>
+
+              {/* Feature highlights */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-yellow-400" />
+                  <span className="text-sm">24/7 Support</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-yellow-400" />
+                  <span className="text-sm">Mock Interviews</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-yellow-400" />
+                  <span className="text-sm">Document Review</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-yellow-400" />
+                  <span className="text-sm">Quick Appointments</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Hero Image */}
+            <div className="hidden md:block relative">
+              <div className="relative">
+                <img
+                  src={heroImage}
+                  alt="Visa Application Help"
+                  className="w-full h-auto rounded-2xl shadow-2xl"
+                />
+                <div className="absolute -inset-4 bg-yellow-500/20 rounded-3xl blur-2xl -z-10"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="bg-gradient-to-b from-yellow-50 to-white px-4 md:px-16 py-10" id="visa-content-section">
       {/* Header */}
       <h1 className="text-center text-3xl font-bold text-gray-900 mb-2">
         About Service
@@ -585,6 +670,7 @@ const VisaApplication = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Terms and Conditions Modal */}
