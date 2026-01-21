@@ -18,6 +18,7 @@ import {
   Target,
   Sparkles,
 } from "lucide-react";
+import heroImage from "../Assets/herosection.png";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -169,41 +170,36 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Hero Image/Illustration */}
+            {/* Hero Image */}
             <div className="hidden md:block relative">
-              <div className="relative bg-gradient-to-br from-green-500/20 to-green-600/10 rounded-3xl p-8 border border-green-500/20">
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Stats Cards */}
-                  {stats.map((stat, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:border-green-500/50 transition"
-                    >
-                      <stat.icon className="w-8 h-8 text-green-500 mb-2" />
-                      <div className="text-2xl font-bold text-white">{stat.value}</div>
-                      <div className="text-sm text-gray-400">{stat.label}</div>
-                    </div>
-                  ))}
-                </div>
+              <div className="relative">
+                <img
+                  src={heroImage}
+                  alt="Study Abroad Success"
+                  className="w-full h-auto rounded-2xl shadow-2xl"
+                />
+                {/* Optional overlay glow effect */}
+                <div className="absolute -inset-4 bg-green-500/20 rounded-3xl blur-2xl -z-10"></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section - Mobile */}
-      <section className="md:hidden bg-gray-900 py-8 px-4">
-        <div className="grid grid-cols-2 gap-4">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-gray-800 rounded-xl p-4 text-center"
-            >
-              <stat.icon className="w-6 h-6 text-green-500 mx-auto mb-2" />
-              <div className="text-xl font-bold text-white">{stat.value}</div>
-              <div className="text-xs text-gray-400">{stat.label}</div>
-            </div>
-          ))}
+      {/* Stats Section */}
+      <section className="bg-white py-12 border-b">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <stat.icon className="w-6 h-6 text-green-500" />
+                  <span className="text-3xl md:text-4xl font-bold text-gray-900">{stat.value}</span>
+                </div>
+                <p className="text-gray-600">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
