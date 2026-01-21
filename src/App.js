@@ -10,6 +10,8 @@ import VisaApplication from "./Components/VisaApplication";
 import Footer from "./Components/Footer";
 import SignIn from "./Components/SignIn";
 import SignUp from "./Components/SignUp";
+import ForgotPassword from "./Components/ForgotPassword";
+import ResetPassword from "./Components/ResetPassword";
 import FloatingwhatsAppButton from "./Components/FloatingWhatsAppButton";
 
 import "./App.css";
@@ -64,6 +66,8 @@ phoneNumber="917337505390"
                 <Route path="/visa-application" element={<VisaApplication />} />
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/verify-email" element={<VerifyEmail/>} />
 
                 {/* Payment pages */}
