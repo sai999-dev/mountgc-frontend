@@ -140,12 +140,23 @@ const SubNavbar = () => {
             )}
           </li>
 
+          {/* ✅ Home Link */}
+          <li
+            className={`cursor-pointer ${
+              location.pathname === "/"
+                ? "text-green-400 font-semibold"
+                : "hover:text-yellow-400"
+            }`}
+          >
+            <Link to="/">Home</Link>
+          </li>
+
           {/* ✅ Services Link */}
           <li
             className={`cursor-pointer ${
               location.pathname === "/services"
                 ? "text-green-400 font-semibold"
-                : "hover:green-yellow-400"
+                : "hover:text-yellow-400"
             }`}
           >
             <Link to="/services">Services</Link>
@@ -250,8 +261,20 @@ const SubNavbar = () => {
 
           <li
             className={`cursor-pointer ${
+              location.pathname === "/"
+                ? "text-green-400 font-semibold"
+                : "hover:text-yellow-400"
+            }`}
+          >
+            <Link to="/" onClick={() => setMenuOpen(false)}>
+              Home
+            </Link>
+          </li>
+
+          <li
+            className={`cursor-pointer ${
               location.pathname === "/services"
-                ? "text-yellow-400 font-semibold"
+                ? "text-green-400 font-semibold"
                 : "hover:text-yellow-400"
             }`}
           >
