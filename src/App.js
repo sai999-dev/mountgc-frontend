@@ -12,6 +12,7 @@ import SignIn from "./Components/SignIn";
 import SignUp from "./Components/SignUp";
 import ForgotPassword from "./Components/ForgotPassword";
 import ResetPassword from "./Components/ResetPassword";
+import LandingPage from "./Components/LandingPage";
 import FloatingwhatsAppButton from "./Components/FloatingWhatsAppButton";
 
 import "./App.css";
@@ -46,19 +47,7 @@ phoneNumber="917337505390"
 
             <div className="flex-grow">
               <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <div className="text-center py-20 px-4">
-                      <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                        Your Gateway To Global Success
-                      </h1>
-                      <p className="text-2xl text-gray-700 max-w-2xl mx-auto">
-                        Join students and professionals on their journey to study, work, and immigrate abroad.
-                      </p>
-                    </div>
-                  }
-                />
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/counselling-session" element={<CounsellingSession />} />
                 <Route path="/book-counseling" element={<BookCounseling />} />
