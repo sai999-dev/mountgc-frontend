@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ScrollToTop from "./Components/ScrollToTop";
 import Navbar from "./Components/Navbar";
 import SubNavbar from "./Components/SubNavbar";
 import Services from "./Components/Services";
@@ -25,6 +26,9 @@ import PaymentCancel from "./Components/PaymentCancel";
 function App() {
 return (
   <Router>
+    {/* ✅ Scroll to top on route change */}
+    <ScrollToTop />
+
     {/* ✅ Floating button placed here - visible on ALL pages */}
     <FloatingwhatsAppButton
 phoneNumber="917337505390"
