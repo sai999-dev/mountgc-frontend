@@ -24,6 +24,7 @@ import {
   Info,
   Plane,
   X,
+  Sparkles,
 } from "lucide-react";
 import heroImage from "../Assets/counsellingsession.png";
 
@@ -399,42 +400,64 @@ const CounsellingSession = () => {
       <Toaster position="top-right" />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white py-16 px-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-green-500 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-400 rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
+        </div>
+
+        <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-20">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  Premium Service
-                </span>
-                <div className="flex items-center space-x-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm">4.9 (10,000+ reviews)</span>
-                </div>
+              <div className="inline-flex items-center bg-green-500/20 border border-green-500/30 rounded-full px-4 py-2 mb-6">
+                <Sparkles className="w-4 h-4 text-green-400 mr-2" />
+                <span className="text-green-400 text-sm font-medium">Expert Guidance Available</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                Expert Counselling Session
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                Expert Counselling
+                <span className="text-green-500"> Session </span>
               </h1>
-              <p className="text-xl text-green-100 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
                 Get personalized 1-on-1 guidance from our expert counselors.
                 Whether you're planning to study abroad, need visa assistance, or
                 seeking career advice - we've got you covered.
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 mb-8">
                 <button
                   onClick={handleLoginToPay}
-                  className="bg-white text-green-700 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition flex items-center space-x-2 shadow-lg"
+                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold transition flex items-center space-x-2 shadow-lg shadow-green-500/25"
                 >
                   <Calendar className="w-5 h-5" />
                   <span>Book Your Session</span>
                 </button>
                 <button
                   onClick={handleWhatsAppClick}
-                  className="bg-green-500 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-400 transition flex items-center space-x-2 border-2 border-green-400"
+                  className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-lg font-semibold transition border border-white/20 flex items-center space-x-2"
                 >
                   <MessageCircle className="w-5 h-5" />
                   <span>WhatsApp Us</span>
                 </button>
+              </div>
+
+              {/* Feature highlights */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-sm">60 Min Sessions</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-sm">Expert Counselors</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-sm">Personalized Advice</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-sm">Post-Session Support</span>
+                </div>
               </div>
             </div>
             {/* Hero Image */}

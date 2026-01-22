@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Video, Phone, MessageCircle, CheckCircle, Info, X, Star, FileText, ArrowRight } from "lucide-react";
+import { Video, Phone, MessageCircle, CheckCircle, Info, X, Star, FileText, ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import gifVideo from "../Assets/gif.mp4";
 import publishImg1 from "../Assets/publishimg1.png";
@@ -273,14 +273,9 @@ const ResearchPaper = () => {
         <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-20">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium animate-pulse">
-                  ON FIRE
-                </span>
-                <div className="flex items-center space-x-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm">4.9 (5,000+ publications)</span>
-                </div>
+              <div className="inline-flex items-center bg-green-500/20 border border-green-500/30 rounded-full px-4 py-2 mb-6">
+                <Sparkles className="w-4 h-4 text-green-400 mr-2" />
+                <span className="text-green-400 text-sm font-medium">Boost Your Academic Profile</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
                 Research Paper
@@ -290,7 +285,7 @@ const ResearchPaper = () => {
               <p className="text-xl text-gray-300 mb-8 leading-relaxed">
                 Boost your academic profile with peer-reviewed publications in IEEE, Springer, Elsevier. Essential for MS/PhD admissions and O-1/EB-1 visa applications.
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 mb-8">
                 <button
                   onClick={() => document.getElementById('start-now-section').scrollIntoView({ behavior: 'smooth' })}
                   className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold transition flex items-center space-x-2 shadow-lg shadow-green-500/25"
@@ -308,6 +303,26 @@ const ResearchPaper = () => {
                   <MessageCircle className="w-5 h-5" />
                   <span>WhatsApp Us</span>
                 </button>
+              </div>
+
+              {/* Feature highlights */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-sm">Top Journals</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-sm">End-to-End Support</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-sm">Co-authorship Options</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span className="text-sm">Publication Guarantee</span>
+                </div>
               </div>
             </div>
 

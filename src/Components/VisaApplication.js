@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Info, Sparkles, Loader2, Star, Plane, MessageCircle, CheckCircle } from "lucide-react";
+import { Info, Sparkles, Loader2, Star, Plane, MessageCircle, CheckCircle, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -246,25 +246,20 @@ const VisaApplication = () => {
       <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-yellow-500 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-400 rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
+          <div className="absolute top-0 left-0 w-96 h-96 bg-green-500 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-400 rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
         </div>
 
         <div className="relative max-w-6xl mx-auto px-6 py-16 md:py-20">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-                  Visa Guarantee
-                </span>
-                <div className="flex items-center space-x-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm">4.9 (8,000+ visas approved)</span>
-                </div>
+              <div className="inline-flex items-center bg-green-500/20 border border-green-500/30 rounded-full px-4 py-2 mb-6">
+                <Sparkles className="w-4 h-4 text-green-400 mr-2" />
+                <span className="text-green-400 text-sm font-medium">Visa Guarantee Included</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
                 Visa Application
-                <span className="text-yellow-400"> Help & Support </span>
+                <span className="text-green-500"> Help & Support </span>
               </h1>
               <p className="text-xl text-gray-300 mb-8 leading-relaxed">
                 Complete visa application assistance for USA, Canada, UK. From documentation to mock interviews, we've got you covered with our visa guarantee.
@@ -272,7 +267,7 @@ const VisaApplication = () => {
               <div className="flex flex-wrap gap-4 mb-8">
                 <button
                   onClick={() => document.getElementById('visa-content-section').scrollIntoView({ behavior: 'smooth' })}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-8 py-4 rounded-lg font-semibold transition flex items-center space-x-2 shadow-lg shadow-yellow-500/25"
+                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold transition flex items-center space-x-2 shadow-lg shadow-green-500/25"
                 >
                   <Plane className="w-5 h-5" />
                   <span>Get Started</span>
@@ -292,19 +287,19 @@ const VisaApplication = () => {
               {/* Feature highlights */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-yellow-400" />
+                  <CheckCircle className="w-5 h-5 text-green-400" />
                   <span className="text-sm">24/7 Support</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-yellow-400" />
+                  <CheckCircle className="w-5 h-5 text-green-400" />
                   <span className="text-sm">Mock Interviews</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-yellow-400" />
+                  <CheckCircle className="w-5 h-5 text-green-400" />
                   <span className="text-sm">Document Review</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-yellow-400" />
+                  <CheckCircle className="w-5 h-5 text-green-400" />
                   <span className="text-sm">Quick Appointments</span>
                 </div>
               </div>
@@ -318,7 +313,7 @@ const VisaApplication = () => {
                   alt="Visa Application Help"
                   className="w-full h-auto rounded-2xl shadow-2xl"
                 />
-                <div className="absolute -inset-4 bg-yellow-500/20 rounded-3xl blur-2xl -z-10"></div>
+                <div className="absolute -inset-4 bg-green-500/20 rounded-3xl blur-2xl -z-10"></div>
               </div>
             </div>
           </div>
