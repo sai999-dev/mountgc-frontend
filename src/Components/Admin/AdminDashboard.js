@@ -17,6 +17,13 @@ import {
   AlertCircle,
   DollarSign,
   Plane,
+  MessageSquare,
+  Plus,
+  Edit2,
+  Trash2,
+  Save,
+  XCircle,
+  Video,
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { authService } from "../../services/authService";
@@ -44,8 +51,25 @@ const AdminDashboard = () => {
     totalBookings: 0,
   });
 
+  // Counselling states
+  const [counsellingServiceTypes, setCounsellingServiceTypes] = useState([]);
+  const [counsellors, setCounsellors] = useState([]);
+  const [counsellingPricing, setCounsellingPricing] = useState([]);
+  const [counsellingPurchases, setCounsellingPurchases] = useState([]);
+  const [counsellingActiveSubTab, setCounsellingActiveSubTab] = useState("purchases");
+
+  // Counselling form states
+  const [showServiceTypeForm, setShowServiceTypeForm] = useState(false);
+  const [showCounsellorForm, setShowCounsellorForm] = useState(false);
+  const [showPricingForm, setShowPricingForm] = useState(false);
+  const [editingServiceType, setEditingServiceType] = useState(null);
+  const [editingCounsellor, setEditingCounsellor] = useState(null);
+  const [editingPricing, setEditingPricing] = useState(null);
+  const [editingPurchase, setEditingPurchase] = useState(null);
+
   const menuItems = [
     { id: "home", label: "Dashboard", icon: Home },
+    { id: "counselling", label: "Counselling Sessions", icon: MessageSquare },
     { id: "research-papers", label: "Research Papers", icon: FileText },
     { id: "visa-applications", label: "Visa Applications", icon: Plane },
     { id: "bookings", label: "Bookings", icon: Calendar },
@@ -98,6 +122,9 @@ const AdminDashboard = () => {
       setUsers(usersData);
       setBookings(bookingsData);
 
+      // Fetch counselling data
+      await fetchCounsellingData();
+
       // Calculate stats (combine research papers and visa applications)
       const allPurchases = [...purchases, ...visaPurchases];
       const totalRevenue = allPurchases.reduce(
@@ -119,6 +146,24 @@ const AdminDashboard = () => {
       console.error("Error fetching dashboard data:", error);
       toast.error("Failed to load dashboard data");
       setLoading(false);
+    }
+  };
+
+  const fetchCounsellingData = async () => {
+    try {
+      const [serviceTypesRes, counsellorsRes, pricingRes, purchasesRes] = await Promise.all([
+        api.get("/counselling/admin/service-types"),
+        api.get("/counselling/admin/counselors"),
+        api.get("/counselling/admin/pricing"),
+        api.get("/counselling/admin/purchases"),
+      ]);
+
+      setCounsellingServiceTypes(serviceTypesRes.data.data || []);
+      setCounsellors(counsellorsRes.data.data || []);
+      setCounsellingPricing(pricingRes.data.data || []);
+      setCounsellingPurchases(purchasesRes.data.data || []);
+    } catch (error) {
+      console.error("Error fetching counselling data:", error);
     }
   };
 
@@ -148,6 +193,132 @@ const AdminDashboard = () => {
 
       toast.success("Purchase updated successfully");
       fetchDashboardData(); // Refresh data
+    } catch (error) {
+      console.error("Update purchase error:", error);
+      toast.error("Failed to update purchase");
+    }
+  };
+
+  // ==================== COUNSELLING HANDLERS ====================
+
+  // Service Type handlers
+  const handleCreateServiceType = async (formData) => {
+    try {
+      await api.post("/counselling/admin/service-types", formData);
+      toast.success("Service type created successfully");
+      setShowServiceTypeForm(false);
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Create service type error:", error);
+      toast.error("Failed to create service type");
+    }
+  };
+
+  const handleUpdateServiceType = async (id, formData) => {
+    try {
+      await api.put(`/counselling/admin/service-types/${id}`, formData);
+      toast.success("Service type updated successfully");
+      setEditingServiceType(null);
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Update service type error:", error);
+      toast.error("Failed to update service type");
+    }
+  };
+
+  const handleDeleteServiceType = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this service type?")) return;
+    try {
+      await api.delete(`/counselling/admin/service-types/${id}`);
+      toast.success("Service type deleted successfully");
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Delete service type error:", error);
+      toast.error("Failed to delete service type");
+    }
+  };
+
+  // Counsellor handlers
+  const handleCreateCounsellor = async (formData) => {
+    try {
+      await api.post("/counselling/admin/counselors", formData);
+      toast.success("Counsellor created successfully");
+      setShowCounsellorForm(false);
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Create counsellor error:", error);
+      toast.error("Failed to create counsellor");
+    }
+  };
+
+  const handleUpdateCounsellor = async (id, formData) => {
+    try {
+      await api.put(`/counselling/admin/counselors/${id}`, formData);
+      toast.success("Counsellor updated successfully");
+      setEditingCounsellor(null);
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Update counsellor error:", error);
+      toast.error("Failed to update counsellor");
+    }
+  };
+
+  const handleDeleteCounsellor = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this counsellor?")) return;
+    try {
+      await api.delete(`/counselling/admin/counselors/${id}`);
+      toast.success("Counsellor deleted successfully");
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Delete counsellor error:", error);
+      toast.error("Failed to delete counsellor");
+    }
+  };
+
+  // Pricing handlers
+  const handleCreatePricing = async (formData) => {
+    try {
+      await api.post("/counselling/admin/pricing", formData);
+      toast.success("Pricing created successfully");
+      setShowPricingForm(false);
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Create pricing error:", error);
+      toast.error("Failed to create pricing");
+    }
+  };
+
+  const handleUpdatePricing = async (id, formData) => {
+    try {
+      await api.put(`/counselling/admin/pricing/${id}`, formData);
+      toast.success("Pricing updated successfully");
+      setEditingPricing(null);
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Update pricing error:", error);
+      toast.error("Failed to update pricing");
+    }
+  };
+
+  const handleDeletePricing = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this pricing?")) return;
+    try {
+      await api.delete(`/counselling/admin/pricing/${id}`);
+      toast.success("Pricing deleted successfully");
+      fetchCounsellingData();
+    } catch (error) {
+      console.error("Delete pricing error:", error);
+      toast.error("Failed to delete pricing");
+    }
+  };
+
+  // Counselling Purchase handlers
+  const handleUpdateCounsellingPurchase = async (id, formData) => {
+    try {
+      await api.put(`/counselling/admin/purchases/${id}`, formData);
+      toast.success("Purchase updated successfully");
+      setEditingPurchase(null);
+      fetchCounsellingData();
     } catch (error) {
       console.error("Update purchase error:", error);
       toast.error("Failed to update purchase");
@@ -427,6 +598,328 @@ const AdminDashboard = () => {
                 )}
               </div>
             </>
+          )}
+
+          {/* Counselling Sessions Tab */}
+          {activeTab === "counselling" && (
+            <div>
+              <div className="mb-6">
+                <h2 className="text-3xl font-bold text-gray-800">
+                  Counselling Sessions Management
+                </h2>
+                <p className="text-gray-600 mt-1">
+                  Manage service types, counsellors, pricing, and student purchases
+                </p>
+              </div>
+
+              {/* Sub-tabs */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {["purchases", "service-types", "counsellors", "pricing"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setCounsellingActiveSubTab(tab)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      counsellingActiveSubTab === tab
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {tab === "purchases" ? "Purchases" :
+                     tab === "service-types" ? "Service Types" :
+                     tab === "counsellors" ? "Counsellors" : "Pricing"}
+                  </button>
+                ))}
+              </div>
+
+              {/* Purchases Sub-tab */}
+              {counsellingActiveSubTab === "purchases" && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="p-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-800">Student Purchases</h3>
+                  </div>
+                  {counsellingPurchases.length === 0 ? (
+                    <div className="text-center py-12">
+                      <MessageSquare className="mx-auto text-gray-400 mb-3" size={48} />
+                      <p className="text-gray-600">No counselling purchases yet</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Order ID</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Student</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Service</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Counsellor</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Amount</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Payment</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {counsellingPurchases.map((purchase) => (
+                            <tr key={purchase.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-3 text-sm font-medium text-gray-800">{purchase.order_id}</td>
+                              <td className="px-4 py-3">
+                                <div>
+                                  <p className="text-sm font-medium text-gray-800">{purchase.user?.username || purchase.name}</p>
+                                  <p className="text-xs text-gray-600">{purchase.user?.email || purchase.email}</p>
+                                </div>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-800">{purchase.service_type?.name || "N/A"}</td>
+                              <td className="px-4 py-3 text-sm text-gray-800">{purchase.counselor?.name || "N/A"}</td>
+                              <td className="px-4 py-3 text-sm text-gray-800">{purchase.currency} {purchase.amount_paid}</td>
+                              <td className="px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                  purchase.status === "completed" ? "bg-green-100 text-green-700" :
+                                  purchase.status === "in_progress" ? "bg-yellow-100 text-yellow-700" :
+                                  purchase.status === "scheduled" ? "bg-blue-100 text-blue-700" :
+                                  "bg-gray-100 text-gray-700"
+                                }`}>
+                                  {purchase.status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                  purchase.payment_status === "completed" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                                }`}>
+                                  {purchase.payment_status}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3">
+                                <button
+                                  onClick={() => setEditingPurchase(purchase)}
+                                  className="text-blue-600 hover:text-blue-800"
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Service Types Sub-tab */}
+              {counsellingActiveSubTab === "service-types" && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">Service Types</h3>
+                    <button
+                      onClick={() => setShowServiceTypeForm(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                      <Plus size={16} /> Add Service Type
+                    </button>
+                  </div>
+                  {counsellingServiceTypes.length === 0 ? (
+                    <div className="text-center py-12">
+                      <p className="text-gray-600">No service types yet. Add one to get started.</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Name</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Description</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Duration</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {counsellingServiceTypes.map((type) => (
+                            <tr key={type.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-3 text-sm font-medium text-gray-800">{type.name}</td>
+                              <td className="px-4 py-3 text-sm text-gray-600">{type.description || "-"}</td>
+                              <td className="px-4 py-3 text-sm text-gray-800">{type.duration_minutes} mins</td>
+                              <td className="px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                  type.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                                }`}>
+                                  {type.is_active ? "Active" : "Inactive"}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 flex gap-2">
+                                <button onClick={() => setEditingServiceType(type)} className="text-blue-600 hover:text-blue-800">
+                                  <Edit2 size={16} />
+                                </button>
+                                <button onClick={() => handleDeleteServiceType(type.id)} className="text-red-600 hover:text-red-800">
+                                  <Trash2 size={16} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Counsellors Sub-tab */}
+              {counsellingActiveSubTab === "counsellors" && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">Counsellors</h3>
+                    <button
+                      onClick={() => setShowCounsellorForm(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                      <Plus size={16} /> Add Counsellor
+                    </button>
+                  </div>
+                  {counsellors.length === 0 ? (
+                    <div className="text-center py-12">
+                      <p className="text-gray-600">No counsellors yet. Add one to get started.</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Name</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Role</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Email</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {counsellors.map((counsellor) => (
+                            <tr key={counsellor.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-3 text-sm font-medium text-gray-800">{counsellor.name}</td>
+                              <td className="px-4 py-3 text-sm text-gray-600">{counsellor.role || "-"}</td>
+                              <td className="px-4 py-3 text-sm text-gray-600">{counsellor.email || "-"}</td>
+                              <td className="px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                  counsellor.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                                }`}>
+                                  {counsellor.is_active ? "Active" : "Inactive"}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 flex gap-2">
+                                <button onClick={() => setEditingCounsellor(counsellor)} className="text-blue-600 hover:text-blue-800">
+                                  <Edit2 size={16} />
+                                </button>
+                                <button onClick={() => handleDeleteCounsellor(counsellor.id)} className="text-red-600 hover:text-red-800">
+                                  <Trash2 size={16} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Pricing Sub-tab */}
+              {counsellingActiveSubTab === "pricing" && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">Pricing Configuration</h3>
+                    <button
+                      onClick={() => setShowPricingForm(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                      <Plus size={16} /> Add Pricing
+                    </button>
+                  </div>
+                  {counsellingPricing.length === 0 ? (
+                    <div className="text-center py-12">
+                      <p className="text-gray-600">No pricing configured yet. Add pricing to enable purchases.</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Service Type</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Counsellor</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Currency</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Original</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Discounted</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {counsellingPricing.map((pricing) => (
+                            <tr key={pricing.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-3 text-sm font-medium text-gray-800">{pricing.service_type?.name || "N/A"}</td>
+                              <td className="px-4 py-3 text-sm text-gray-600">{pricing.counselor?.name || "N/A"}</td>
+                              <td className="px-4 py-3 text-sm text-gray-800">{pricing.currency}</td>
+                              <td className="px-4 py-3 text-sm text-gray-600 line-through">{pricing.original_price}</td>
+                              <td className="px-4 py-3 text-sm font-semibold text-green-600">{pricing.discounted_price}</td>
+                              <td className="px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                  pricing.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                                }`}>
+                                  {pricing.is_active ? "Active" : "Inactive"}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 flex gap-2">
+                                <button onClick={() => setEditingPricing(pricing)} className="text-blue-600 hover:text-blue-800">
+                                  <Edit2 size={16} />
+                                </button>
+                                <button onClick={() => handleDeletePricing(pricing.id)} className="text-red-600 hover:text-red-800">
+                                  <Trash2 size={16} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Service Type Form Modal */}
+              {(showServiceTypeForm || editingServiceType) && (
+                <ServiceTypeFormModal
+                  serviceType={editingServiceType}
+                  onSave={editingServiceType ? (data) => handleUpdateServiceType(editingServiceType.id, data) : handleCreateServiceType}
+                  onClose={() => { setShowServiceTypeForm(false); setEditingServiceType(null); }}
+                />
+              )}
+
+              {/* Counsellor Form Modal */}
+              {(showCounsellorForm || editingCounsellor) && (
+                <CounsellorFormModal
+                  counsellor={editingCounsellor}
+                  onSave={editingCounsellor ? (data) => handleUpdateCounsellor(editingCounsellor.id, data) : handleCreateCounsellor}
+                  onClose={() => { setShowCounsellorForm(false); setEditingCounsellor(null); }}
+                />
+              )}
+
+              {/* Pricing Form Modal */}
+              {(showPricingForm || editingPricing) && (
+                <PricingFormModal
+                  pricing={editingPricing}
+                  serviceTypes={counsellingServiceTypes}
+                  counsellors={counsellors}
+                  onSave={editingPricing ? (data) => handleUpdatePricing(editingPricing.id, data) : handleCreatePricing}
+                  onClose={() => { setShowPricingForm(false); setEditingPricing(null); }}
+                />
+              )}
+
+              {/* Purchase Edit Modal */}
+              {editingPurchase && (
+                <PurchaseEditModal
+                  purchase={editingPurchase}
+                  onSave={(data) => handleUpdateCounsellingPurchase(editingPurchase.id, data)}
+                  onClose={() => setEditingPurchase(null)}
+                />
+              )}
+            </div>
           )}
 
           {/* Visa Applications Tab */}
@@ -798,6 +1291,406 @@ const AdminDashboard = () => {
             </div>
           )}
         </main>
+      </div>
+    </div>
+  );
+};
+
+// ==================== MODAL COMPONENTS ====================
+
+// Service Type Form Modal
+const ServiceTypeFormModal = ({ serviceType, onSave, onClose }) => {
+  const [formData, setFormData] = useState({
+    name: serviceType?.name || "",
+    description: serviceType?.description || "",
+    duration_minutes: serviceType?.duration_minutes || 30,
+    is_active: serviceType?.is_active ?? true,
+    display_order: serviceType?.display_order || 0,
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">
+          {serviceType ? "Edit Service Type" : "Add Service Type"}
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              rows={3}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Duration (minutes)</label>
+            <input
+              type="number"
+              value={formData.duration_minutes}
+              onChange={(e) => setFormData({ ...formData, duration_minutes: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              min="5"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
+            <input
+              type="number"
+              value={formData.display_order}
+              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="is_active"
+              checked={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+              className="w-4 h-4 text-green-600"
+            />
+            <label htmlFor="is_active" className="text-sm text-gray-700">Active</label>
+          </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              {serviceType ? "Update" : "Create"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Counsellor Form Modal
+const CounsellorFormModal = ({ counsellor, onSave, onClose }) => {
+  const [formData, setFormData] = useState({
+    name: counsellor?.name || "",
+    role: counsellor?.role || "",
+    email: counsellor?.email || "",
+    bio: counsellor?.bio || "",
+    is_active: counsellor?.is_active ?? true,
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">
+          {counsellor ? "Edit Counsellor" : "Add Counsellor"}
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+            <input
+              type="text"
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="e.g., Senior Counsellor"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+            <textarea
+              value={formData.bio}
+              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              rows={3}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="counsellor_active"
+              checked={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+              className="w-4 h-4 text-green-600"
+            />
+            <label htmlFor="counsellor_active" className="text-sm text-gray-700">Active</label>
+          </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              {counsellor ? "Update" : "Create"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Pricing Form Modal
+const PricingFormModal = ({ pricing, serviceTypes, counsellors, onSave, onClose }) => {
+  const [formData, setFormData] = useState({
+    service_type_id: pricing?.service_type_id || "",
+    counselor_id: pricing?.counselor_id || "",
+    currency: pricing?.currency || "USD",
+    original_price: pricing?.original_price || 0,
+    discounted_price: pricing?.discounted_price || 0,
+    is_active: pricing?.is_active ?? true,
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave({
+      ...formData,
+      service_type_id: parseInt(formData.service_type_id),
+      counselor_id: parseInt(formData.counselor_id),
+      original_price: parseFloat(formData.original_price),
+      discounted_price: parseFloat(formData.discounted_price),
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">
+          {pricing ? "Edit Pricing" : "Add Pricing"}
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Service Type *</label>
+            <select
+              value={formData.service_type_id}
+              onChange={(e) => setFormData({ ...formData, service_type_id: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+            >
+              <option value="">Select Service Type</option>
+              {serviceTypes.map((type) => (
+                <option key={type.id} value={type.id}>{type.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Counsellor *</label>
+            <select
+              value={formData.counselor_id}
+              onChange={(e) => setFormData({ ...formData, counselor_id: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              required
+            >
+              <option value="">Select Counsellor</option>
+              {counsellors.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Currency *</label>
+            <select
+              value={formData.currency}
+              onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+              <option value="USD">USD</option>
+              <option value="INR">INR</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Original Price</label>
+              <input
+                type="number"
+                value={formData.original_price}
+                onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Discounted Price *</label>
+              <input
+                type="number"
+                value={formData.discounted_price}
+                onChange={(e) => setFormData({ ...formData, discounted_price: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="pricing_active"
+              checked={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+              className="w-4 h-4 text-green-600"
+            />
+            <label htmlFor="pricing_active" className="text-sm text-gray-700">Active</label>
+          </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              {pricing ? "Update" : "Create"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Purchase Edit Modal
+const PurchaseEditModal = ({ purchase, onSave, onClose }) => {
+  const [formData, setFormData] = useState({
+    status: purchase?.status || "pending",
+    admin_notes: purchase?.admin_notes || "",
+    meeting_link: purchase?.meeting_link || "",
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 w-full max-w-lg mx-4">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">Edit Purchase</h3>
+
+        {/* Purchase Info */}
+        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+          <p className="text-sm text-gray-600">Order: <span className="font-semibold text-gray-800">{purchase.order_id}</span></p>
+          <p className="text-sm text-gray-600">Student: <span className="font-semibold text-gray-800">{purchase.user?.username || purchase.name}</span></p>
+          <p className="text-sm text-gray-600">Email: <span className="font-semibold text-gray-800">{purchase.user?.email || purchase.email}</span></p>
+          <p className="text-sm text-gray-600">Service: <span className="font-semibold text-gray-800">{purchase.service_type?.name}</span></p>
+          <p className="text-sm text-gray-600">Counsellor: <span className="font-semibold text-gray-800">{purchase.counselor?.name}</span></p>
+          <p className="text-sm text-gray-600">Amount: <span className="font-semibold text-green-600">{purchase.currency} {purchase.amount_paid}</span></p>
+          {purchase.student_notes && (
+            <div className="mt-2 pt-2 border-t border-gray-200">
+              <p className="text-sm text-gray-600">Student Notes:</p>
+              <p className="text-sm text-gray-800 italic">"{purchase.student_notes}"</p>
+            </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+              <option value="pending">Pending</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Meeting Link</label>
+            <input
+              type="url"
+              value={formData.meeting_link}
+              onChange={(e) => setFormData({ ...formData, meeting_link: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="https://meet.google.com/..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Admin Notes</label>
+            <textarea
+              value={formData.admin_notes}
+              onChange={(e) => setFormData({ ...formData, admin_notes: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              rows={4}
+              placeholder="Internal notes about this counselling session..."
+            />
+          </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Update
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
