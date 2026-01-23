@@ -960,7 +960,7 @@ const CounsellingSession = () => {
         isOpen={showTermsModal}
         onClose={() => setShowTermsModal(false)}
         onAccept={handleTermsAccepted}
-        serviceType="counselling"
+        serviceType="counselling_session"
       />
     </div>
   );
