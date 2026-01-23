@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { X, FileText, CheckCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { X, FileText, CheckCircle, RefreshCw } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -10,20 +10,39 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
   const [signedName, setSignedName] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Signature canvas state
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [hasSignature, setHasSignature] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
       setLoading(true);
       setTerms(null);
       setAccepted(false);
       setSignedName('');
+      setHasSignature(false);
       fetchTerms();
       checkExistingAgreement();
     }
   }, [isOpen, serviceType, counsellingServiceTypeId]);
 
+  // Initialize canvas when terms are loaded
+  useEffect(() => {
+    if (terms && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+    }
+  }, [terms]);
+
   const fetchTerms = async () => {
     try {
-      // Build URL with query params for counselling sessions
       let url = `https://mountgc-backend.onrender.com/api/student/terms/${serviceType}`;
       if (serviceType === 'counselling_session' && counsellingServiceTypeId) {
         url += `?counselling_service_type_id=${counsellingServiceTypeId}`;
@@ -51,7 +70,6 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
       const token = localStorage.getItem('accessToken');
       if (!token) return;
 
-      // Build URL with query params for counselling sessions
       let url = `https://mountgc-backend.onrender.com/api/student/agreement/${serviceType}/check`;
       if (serviceType === 'counselling_session' && counsellingServiceTypeId) {
         url += `?counselling_service_type_id=${counsellingServiceTypeId}`;
@@ -62,13 +80,72 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
       });
 
       if (response.data.success && response.data.data.has_agreed) {
-        // User already agreed, skip modal
         onAccept();
         onClose();
       }
     } catch (error) {
       console.error('Error checking agreement:', error);
     }
+  };
+
+  // Canvas drawing functions
+  const getCoordinates = (e) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    if (e.touches) {
+      return {
+        x: (e.touches[0].clientX - rect.left) * scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY
+      };
+    }
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
+    };
+  };
+
+  const startDrawing = (e) => {
+    e.preventDefault();
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const { x, y } = getCoordinates(e);
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    setIsDrawing(true);
+  };
+
+  const draw = (e) => {
+    if (!isDrawing) return;
+    e.preventDefault();
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const { x, y } = getCoordinates(e);
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    setHasSignature(true);
+  };
+
+  const stopDrawing = () => {
+    setIsDrawing(false);
+  };
+
+  const clearSignature = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    setHasSignature(false);
+  };
+
+  const getSignatureImage = () => {
+    const canvas = canvasRef.current;
+    return canvas.toDataURL('image/png');
   };
 
   const handleSubmit = async (e) => {
@@ -84,18 +161,24 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
       return;
     }
 
+    if (!hasSignature) {
+      toast.error('Please draw your signature');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
       const token = localStorage.getItem('accessToken');
+      const signatureImage = getSignatureImage();
 
       const payload = {
         service_type: serviceType,
         signed_name: signedName,
+        signature_image: signatureImage,
         terms_id: terms.terms_id
       };
 
-      // Include counselling_service_type_id for counselling sessions
       if (serviceType === 'counselling_session' && counsellingServiceTypeId) {
         payload.counselling_service_type_id = counsellingServiceTypeId;
       }
@@ -108,7 +191,7 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
 
       if (response.data.success) {
         toast.success('Terms accepted successfully!');
-        onAccept(); // Proceed with payment
+        onAccept();
         onClose();
       }
     } catch (error) {
@@ -151,7 +234,7 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
             </div>
 
             {/* Terms Content */}
-            <div className="border border-gray-300 rounded-lg p-6 max-h-96 overflow-y-auto bg-gray-50">
+            <div className="border border-gray-300 rounded-lg p-6 max-h-64 overflow-y-auto bg-gray-50">
               <div className="prose prose-sm max-w-none">
                 <pre className="whitespace-pre-wrap font-sans text-sm text-gray-700 leading-relaxed">
                   {terms.content}
@@ -177,10 +260,45 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
               </label>
             </div>
 
-            {/* Signature Field */}
+            {/* Signature Section */}
+            <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-semibold text-gray-700">
+                  Draw Your Signature <span className="text-red-500">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={clearSignature}
+                  className="text-sm text-gray-600 hover:text-gray-800 flex items-center space-x-1"
+                >
+                  <RefreshCw size={14} />
+                  <span>Clear</span>
+                </button>
+              </div>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg bg-white overflow-hidden">
+                <canvas
+                  ref={canvasRef}
+                  width={500}
+                  height={150}
+                  className="w-full cursor-crosshair touch-none"
+                  onMouseDown={startDrawing}
+                  onMouseMove={draw}
+                  onMouseUp={stopDrawing}
+                  onMouseLeave={stopDrawing}
+                  onTouchStart={startDrawing}
+                  onTouchMove={draw}
+                  onTouchEnd={stopDrawing}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Use your mouse or finger to draw your signature above
+              </p>
+            </div>
+
+            {/* Typed Name Field */}
             <div>
               <label htmlFor="signed-name" className="block text-sm font-semibold text-gray-700 mb-2">
-                Type Your Full Name (Digital Signature) <span className="text-red-500">*</span>
+                Type Your Full Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -192,7 +310,7 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
                 required
               />
               <p className="text-xs text-gray-500 mt-1">
-                This will serve as your legal digital signature
+                This confirms your identity and serves as your digital signature
               </p>
             </div>
 
@@ -200,15 +318,15 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
             <div className="flex space-x-3 pt-4">
               <button
                 type="submit"
-                disabled={!accepted || !signedName.trim() || submitting}
+                disabled={!accepted || !signedName.trim() || !hasSignature || submitting}
                 className={`flex-1 font-semibold py-3 rounded-lg transition flex items-center justify-center space-x-2 ${
-                  !accepted || !signedName.trim() || submitting
+                  !accepted || !signedName.trim() || !hasSignature || submitting
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : 'bg-green-600 hover:bg-green-700 text-white'
                 }`}
               >
                 <CheckCircle size={20} />
-                <span>{submitting ? 'Processing...' : 'Accept & Continue to Payment'}</span>
+                <span>{submitting ? 'Processing...' : 'Sign & Continue to Payment'}</span>
               </button>
               <button
                 type="button"
@@ -221,7 +339,7 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
             </div>
 
             <p className="text-xs text-gray-500 text-center mt-2">
-              Your agreement will be securely stored and can be accessed by administrators for record-keeping purposes.
+              Your signed agreement will be securely stored as a PDF document and can be downloaded by administrators.
             </p>
           </form>
         ) : (
