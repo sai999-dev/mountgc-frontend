@@ -94,19 +94,9 @@ const CounsellingSession = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching pricing:", error);
-        // Use fallback data if API fails
-        setServiceTypes([
-          { service_type_id: 1, name: "Initial Counseling Session", duration: "1 hour" },
-          { service_type_id: 2, name: "Complete Application Help", duration: "2 hours" },
-          { service_type_id: 3, name: "Job Application Help", duration: "1.5 hours" },
-          { service_type_id: 4, name: "Express Entry/PNP Help", duration: "1 hour" },
-        ]);
-        setCounselors([
-          { counselor_id: 1, name: "Yash Mittra", role: "Senior Counselor" },
-          { counselor_id: 2, name: "Priya Sharma", role: "Career Expert" },
-        ]);
-        setSelectedServiceType(1);
-        setSelectedCounselor(1);
+        toast.error("Failed to load pricing information. Please refresh the page or contact us.");
+        setServiceTypes([]);
+        setCounselors([]);
         setLoading(false);
       }
     };
@@ -151,22 +141,12 @@ const CounsellingSession = () => {
           discount_percent: config.discount_percent,
         });
       } else {
-        // Fallback pricing
-        const fallbackPricing = {
-          USD: { actual: 156, discounted: 125, discount_percent: 20 },
-          INR: { actual: 12999, discounted: 10499, discount_percent: 19 },
-          EUR: { actual: 140, discounted: 112, discount_percent: 20 },
-        };
-        setCurrentPrice(fallbackPricing[currency] || fallbackPricing.USD);
+        // No matching pricing found
+        setCurrentPrice(null);
       }
     } else {
-      // Default fallback
-      const fallbackPricing = {
-        USD: { actual: 156, discounted: 125, discount_percent: 20 },
-        INR: { actual: 12999, discounted: 10499, discount_percent: 19 },
-        EUR: { actual: 140, discounted: 112, discount_percent: 20 },
-      };
-      setCurrentPrice(fallbackPricing[currency] || fallbackPricing.USD);
+      // No pricing data available
+      setCurrentPrice(null);
     }
   }, [selectedServiceType, selectedCounselor, currency, pricingConfigs]);
 
@@ -262,12 +242,12 @@ const CounsellingSession = () => {
 
   const getSelectedServiceName = () => {
     const service = serviceTypes.find((s) => s.service_type_id === selectedServiceType);
-    return service ? service.name : "Initial Counseling Session";
+    return service ? service.name : "";
   };
 
   const getSelectedServiceDuration = () => {
     const service = serviceTypes.find((s) => s.service_type_id === selectedServiceType);
-    return service ? service.duration : "1 hour";
+    return service ? service.duration : "";
   };
 
   const getSelectedCounselorName = () => {
@@ -327,6 +307,11 @@ const CounsellingSession = () => {
   };
 
   const handleTermsAccepted = async () => {
+    if (!currentPrice) {
+      toast.error("Pricing not available. Please contact us for assistance.");
+      return;
+    }
+
     setPurchaseLoading(true);
 
     try {
@@ -563,12 +548,17 @@ const CounsellingSession = () => {
                       value={selectedServiceType || ""}
                       onChange={(e) => setSelectedServiceType(parseInt(e.target.value))}
                       className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent max-w-[180px] text-sm"
+                      disabled={serviceTypes.length === 0}
                     >
-                      {serviceTypes.map((service) => (
-                        <option key={service.service_type_id} value={service.service_type_id}>
-                          {service.name}
-                        </option>
-                      ))}
+                      {serviceTypes.length === 0 ? (
+                        <option value="">No services available</option>
+                      ) : (
+                        serviceTypes.map((service) => (
+                          <option key={service.service_type_id} value={service.service_type_id}>
+                            {service.name}
+                          </option>
+                        ))
+                      )}
                     </select>
                   </div>
 
@@ -610,17 +600,22 @@ const CounsellingSession = () => {
                       value={selectedCounselor || ""}
                       onChange={(e) => setSelectedCounselor(parseInt(e.target.value))}
                       className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      disabled={counselors.length === 0}
                     >
-                      {counselors.map((counselor) => (
-                        <option key={counselor.counselor_id} value={counselor.counselor_id}>
-                          {counselor.name}
-                        </option>
-                      ))}
+                      {counselors.length === 0 ? (
+                        <option value="">No counselors available</option>
+                      ) : (
+                        counselors.map((counselor) => (
+                          <option key={counselor.counselor_id} value={counselor.counselor_id}>
+                            {counselor.name}
+                          </option>
+                        ))
+                      )}
                     </select>
                   </div>
 
                   {/* Pricing */}
-                  {currentPrice && (
+                  {currentPrice ? (
                     <div className="border-t border-gray-200 pt-4 mt-4">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-gray-600 font-medium">Actual Amount:</span>
@@ -646,12 +641,23 @@ const CounsellingSession = () => {
                         </div>
                       </div>
                     </div>
+                  ) : (
+                    <div className="border-t border-gray-200 pt-4 mt-4">
+                      <p className="text-gray-500 text-center text-sm">
+                        Pricing not available for this selection. Please contact us via WhatsApp for assistance.
+                      </p>
+                    </div>
                   )}
 
                   {/* Login to Pay / Buy Now Button */}
                   <button
                     onClick={handleLoginToPay}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-4 rounded-full transition mt-6 text-lg"
+                    disabled={!currentPrice}
+                    className={`w-full font-semibold py-4 rounded-full transition mt-6 text-lg ${
+                      currentPrice
+                        ? "bg-green-500 hover:bg-green-600 text-white"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
                   >
                     {isAuthenticated ? "Buy Now" : "Log In To Pay"}
                   </button>
