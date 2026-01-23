@@ -961,6 +961,7 @@ const CounsellingSession = () => {
         onClose={() => setShowTermsModal(false)}
         onAccept={handleTermsAccepted}
         serviceType="counselling_session"
+        counsellingServiceTypeId={selectedServiceType}
       />
     </div>
   );

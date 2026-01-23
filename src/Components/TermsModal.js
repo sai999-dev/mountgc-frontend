@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, FileText, CheckCircle } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const TermsModal = ({ isOpen, onClose, onAccept, serviceType }) => {
+const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingServiceTypeId }) => {
   const [terms, setTerms] = useState(null);
   const [loading, setLoading] = useState(true);
   const [accepted, setAccepted] = useState(false);
@@ -12,23 +12,35 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType }) => {
 
   useEffect(() => {
     if (isOpen) {
+      setLoading(true);
+      setTerms(null);
+      setAccepted(false);
+      setSignedName('');
       fetchTerms();
       checkExistingAgreement();
     }
-  }, [isOpen, serviceType]);
+  }, [isOpen, serviceType, counsellingServiceTypeId]);
 
   const fetchTerms = async () => {
     try {
-      const response = await axios.get(
-        `https://mountgc-backend.onrender.com/api/student/terms/${serviceType}`
-      );
+      // Build URL with query params for counselling sessions
+      let url = `https://mountgc-backend.onrender.com/api/student/terms/${serviceType}`;
+      if (serviceType === 'counselling_session' && counsellingServiceTypeId) {
+        url += `?counselling_service_type_id=${counsellingServiceTypeId}`;
+      }
+
+      const response = await axios.get(url);
 
       if (response.data.success) {
         setTerms(response.data.data);
       }
     } catch (error) {
       console.error('Error fetching terms:', error);
-      toast.error('Failed to load terms and conditions');
+      if (error.response?.status === 404) {
+        toast.error('No terms found for this service. Please contact support.');
+      } else {
+        toast.error('Failed to load terms and conditions');
+      }
     } finally {
       setLoading(false);
     }
@@ -39,10 +51,15 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType }) => {
       const token = localStorage.getItem('accessToken');
       if (!token) return;
 
-      const response = await axios.get(
-        `https://mountgc-backend.onrender.com/api/student/agreement/${serviceType}/check`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      // Build URL with query params for counselling sessions
+      let url = `https://mountgc-backend.onrender.com/api/student/agreement/${serviceType}/check`;
+      if (serviceType === 'counselling_session' && counsellingServiceTypeId) {
+        url += `?counselling_service_type_id=${counsellingServiceTypeId}`;
+      }
+
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
       if (response.data.success && response.data.data.has_agreed) {
         // User already agreed, skip modal
@@ -72,13 +89,20 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType }) => {
     try {
       const token = localStorage.getItem('accessToken');
 
+      const payload = {
+        service_type: serviceType,
+        signed_name: signedName,
+        terms_id: terms.terms_id
+      };
+
+      // Include counselling_service_type_id for counselling sessions
+      if (serviceType === 'counselling_session' && counsellingServiceTypeId) {
+        payload.counselling_service_type_id = counsellingServiceTypeId;
+      }
+
       const response = await axios.post(
         'https://mountgc-backend.onrender.com/api/student/agreement/sign',
-        {
-          service_type: serviceType,
-          signed_name: signedName,
-          terms_id: terms.terms_id
-        },
+        payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
