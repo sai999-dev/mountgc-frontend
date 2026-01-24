@@ -441,11 +441,19 @@ const StudentDashboard = () => {
                           </div>
                         )}
 
-                        {/* Admin Notes for Student */}
-                        {purchase.admin_notes && (
-                          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-4">
-                            <p className="text-xs text-blue-600 mb-1 font-semibold">Message from Admin:</p>
-                            <p className="text-sm text-blue-800">{purchase.admin_notes}</p>
+                        {/* Scheduled Date/Time - Show even without meeting link */}
+                        {purchase.scheduled_date && !purchase.meeting_link && (
+                          <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded mb-4">
+                            <div className="flex items-center space-x-2">
+                              <Calendar className="text-purple-600" size={20} />
+                              <div>
+                                <p className="font-semibold text-purple-800">Session Scheduled</p>
+                                <p className="text-sm text-purple-600">
+                                  {new Date(purchase.scheduled_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                  {purchase.scheduled_time && ` at ${purchase.scheduled_time}`}
+                                </p>
+                              </div>
+                            </div>
                           </div>
                         )}
 
@@ -1183,15 +1191,23 @@ const StudentDashboard = () => {
                             </div>
                           )}
 
-                          {/* Admin Notes */}
-                          {purchase.admin_notes && (
-                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-4">
-                              <p className="text-xs text-blue-600 mb-1 font-semibold">Message from Admin:</p>
-                              <p className="text-sm text-blue-800">{purchase.admin_notes}</p>
+                          {/* Scheduled Date/Time - Show even without meeting link */}
+                          {purchase.scheduled_date && !purchase.meeting_link && (
+                            <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded mb-4">
+                              <div className="flex items-center space-x-2">
+                                <Calendar className="text-purple-600" size={20} />
+                                <div>
+                                  <p className="font-semibold text-purple-800">Session Scheduled</p>
+                                  <p className="text-sm text-purple-600">
+                                    {new Date(purchase.scheduled_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                    {purchase.scheduled_time && ` at ${purchase.scheduled_time}`}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                           )}
 
-                          {purchase.status === 'initiated' && purchase.payment_status === 'completed' && !purchase.meeting_link && (
+                          {purchase.status === 'initiated' && purchase.payment_status === 'completed' && !purchase.meeting_link && !purchase.scheduled_date && (
                             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
                               <p className="text-sm text-blue-800">
                                 <strong>Session Initiated!</strong> Your payment has been received. Our team will schedule your session and share the meeting link soon.
