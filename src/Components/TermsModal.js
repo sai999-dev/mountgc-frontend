@@ -15,6 +15,10 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSignature, setHasSignature] = useState(false);
 
+  // Already signed state - show signed agreement instead of form
+  const [alreadySigned, setAlreadySigned] = useState(false);
+  const [existingAgreement, setExistingAgreement] = useState(null);
+
   useEffect(() => {
     if (isOpen) {
       setLoading(true);
@@ -22,6 +26,8 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
       setAccepted(false);
       setSignedName('');
       setHasSignature(false);
+      setAlreadySigned(false);
+      setExistingAgreement(null);
       fetchTerms();
       checkExistingAgreement();
     }
@@ -80,8 +86,9 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
       });
 
       if (response.data.success && response.data.data.has_agreed) {
-        onAccept();
-        onClose();
+        // User has already signed - show their signed agreement
+        setAlreadySigned(true);
+        setExistingAgreement(response.data.data.agreement);
       }
     } catch (error) {
       console.error('Error checking agreement:', error);
@@ -224,6 +231,86 @@ const TermsModal = ({ isOpen, onClose, onAccept, serviceType, counsellingService
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          </div>
+        ) : alreadySigned && existingAgreement ? (
+          /* Show already signed agreement */
+          <div className="space-y-4">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center space-x-2 mb-2">
+                <CheckCircle className="text-green-600" size={24} />
+                <h3 className="text-lg font-bold text-green-800">Agreement Already Signed</h3>
+              </div>
+              <p className="text-sm text-green-700">
+                You have already signed the Terms & Conditions for this service. You can proceed to payment.
+              </p>
+            </div>
+
+            {/* Show signed agreement details */}
+            <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+              <h4 className="font-semibold text-gray-800 mb-3">Your Signed Agreement</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-gray-500">Signed Name:</p>
+                  <p className="font-semibold text-gray-800">{existingAgreement.signed_name}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Signed On:</p>
+                  <p className="font-semibold text-gray-800">
+                    {new Date(existingAgreement.agreed_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Terms Version:</p>
+                  <p className="font-semibold text-gray-800">{existingAgreement.terms_version || existingAgreement.terms?.version}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Agreement ID:</p>
+                  <p className="font-semibold text-gray-800">#{existingAgreement.agreement_id}</p>
+                </div>
+              </div>
+
+              {/* Show signature image if available */}
+              {existingAgreement.signature_image && (
+                <div className="mt-4">
+                  <p className="text-gray-500 text-sm mb-2">Your Signature:</p>
+                  <div className="border border-gray-300 rounded bg-white p-2 inline-block">
+                    <img
+                      src={existingAgreement.signature_image}
+                      alt="Your signature"
+                      className="max-h-20"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex space-x-3 pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  onAccept();
+                  onClose();
+                }}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition flex items-center justify-center space-x-2"
+              >
+                <CheckCircle size={20} />
+                <span>Continue to Payment</span>
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-6 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 rounded-lg transition"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         ) : terms ? (
           <form onSubmit={handleSubmit} className="space-y-4">
