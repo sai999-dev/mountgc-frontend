@@ -1091,8 +1091,137 @@ const StudentDashboard = () => {
                 </div>
               )}
 
+              {/* Counselling Services */}
+              {counsellingPurchases.length > 0 && (
+                <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-6">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <Calendar className="text-purple-600" size={24} />
+                    <h2 className="text-xl font-bold text-gray-800">
+                      My Counselling Sessions
+                    </h2>
+                  </div>
+
+                  {loadingPurchases ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">Loading your sessions...</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {counsellingPurchases.map((purchase) => (
+                        <div
+                          key={purchase.purchase_id}
+                          className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-3 mb-2">
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                  {purchase.service_type?.name || 'Counselling Session'}
+                                </h3>
+                                {getOrderStatusBadge(purchase.status)}
+                                {getPaymentStatusBadge(purchase.payment_status)}
+                              </div>
+                              <p className="text-sm text-gray-500">
+                                Order ID: #{purchase.order_id} • Purchased on {new Date(purchase.created_at).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <div className="bg-gray-50 p-3 rounded-lg">
+                              <p className="text-xs text-gray-500 mb-1">Order Status</p>
+                              <div className="mt-1">
+                                {getOrderStatusBadge(purchase.status)}
+                              </div>
+                            </div>
+                            <div className="bg-gray-50 p-3 rounded-lg">
+                              <p className="text-xs text-gray-500 mb-1">Amount Paid</p>
+                              <p className="text-lg font-bold text-purple-600">
+                                {purchase.currency} {purchase.final_amount?.toLocaleString()}
+                              </p>
+                            </div>
+                            <div className="bg-gray-50 p-3 rounded-lg">
+                              <p className="text-xs text-gray-500 mb-1">Duration</p>
+                              <p className="text-lg font-semibold text-gray-800">
+                                {purchase.duration}
+                              </p>
+                            </div>
+                            <div className="bg-gray-50 p-3 rounded-lg">
+                              <p className="text-xs text-gray-500 mb-1">Case Status</p>
+                              <div className="mt-1">
+                                {getCaseStatusBadge(purchase.case_status)}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Meeting Link */}
+                          {purchase.meeting_link && (
+                            <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mb-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <Video className="text-green-600" size={20} />
+                                  <div>
+                                    <p className="font-semibold text-green-800">Your Meeting Link</p>
+                                    {purchase.scheduled_date && (
+                                      <p className="text-sm text-green-600">
+                                        Scheduled: {new Date(purchase.scheduled_date).toLocaleDateString()}
+                                        {purchase.scheduled_time && ` at ${purchase.scheduled_time}`}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                                <a
+                                  href={purchase.meeting_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center space-x-2 transition"
+                                >
+                                  <span>Join Meeting</span>
+                                  <ExternalLink size={16} />
+                                </a>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Admin Notes */}
+                          {purchase.admin_notes && (
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-4">
+                              <p className="text-xs text-blue-600 mb-1 font-semibold">Message from Admin:</p>
+                              <p className="text-sm text-blue-800">{purchase.admin_notes}</p>
+                            </div>
+                          )}
+
+                          {purchase.status === 'initiated' && purchase.payment_status === 'completed' && !purchase.meeting_link && (
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                              <p className="text-sm text-blue-800">
+                                <strong>Session Initiated!</strong> Your payment has been received. Our team will schedule your session and share the meeting link soon.
+                              </p>
+                            </div>
+                          )}
+
+                          {purchase.status === 'completed' && (
+                            <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                              <p className="text-sm text-green-800">
+                                <strong>Session Completed!</strong> Thank you for using our counselling service.
+                              </p>
+                            </div>
+                          )}
+
+                          {purchase.notes && (
+                            <div className="mt-4 bg-gray-50 p-3 rounded-lg">
+                              <p className="text-xs text-gray-500 mb-1">Your Notes:</p>
+                              <p className="text-sm text-gray-700">{purchase.notes}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* No services message */}
-              {researchPaperPurchases.length === 0 && visaApplicationPurchases.length === 0 && !loadingPurchases && (
+              {researchPaperPurchases.length === 0 && visaApplicationPurchases.length === 0 && counsellingPurchases.length === 0 && !loadingPurchases && (
                 <div className="bg-white rounded-xl shadow-sm p-12 border border-gray-100 text-center">
                   <div className="max-w-md mx-auto">
                     <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
